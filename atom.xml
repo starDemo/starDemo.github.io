@@ -1,0 +1,604 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://stardemo.github.io</id>
+    <title>Zone</title>
+    <updated>2021-03-01T16:01:13.661Z</updated>
+    <generator>https://github.com/jpmonette/feed</generator>
+    <link rel="alternate" href="https://stardemo.github.io"/>
+    <link rel="self" href="https://stardemo.github.io/atom.xml"/>
+    <subtitle>一个技术爱好者的备忘录</subtitle>
+    <logo>https://stardemo.github.io/images/avatar.png</logo>
+    <icon>https://stardemo.github.io/favicon.ico</icon>
+    <rights>All rights reserved 2021, Zone</rights>
+    <entry>
+        <title type="html"><![CDATA[Kubernetes暴露信息给Pod]]></title>
+        <id>https://stardemo.github.io/post/kubernetes-bao-lu-xin-xi-gei-pod/</id>
+        <link href="https://stardemo.github.io/post/kubernetes-bao-lu-xin-xi-gei-pod/">
+        </link>
+        <updated>2021-02-06T08:53:01.000Z</updated>
+        <content type="html"><![CDATA[<h3 id="capabilities-of-the-downward-api">Capabilities of the Downward API</h3>
+<h4 id="feildref即可以暴露的pod定义中的项目">feildRef，即可以暴露的pod定义中的项目：</h4>
+<pre><code>spec.nodeName - the node’s name
+status.hostIP - the node’s IP
+metadata.name - the pod’s name
+metadata.namespace - the pod’s namespace
+status.podIP - the pod’s IP address
+spec.serviceAccountName - the pod’s service account name
+metadata.uid - the pod’s UID
+metadata.labels['&lt;KEY&gt;'] - the value of the pod’s label &lt;KEY&gt; (for example, metadata.labels['mylabel']); available in Kubernetes 1.9+
+metadata.annotations['&lt;KEY&gt;'] - the value of the pod’s annotation &lt;KEY&gt; (for example, metadata.annotations['myannotation']); available in Kubernetes 1.9+
+</code></pre>
+<h4 id="resourcefieldref即可以暴露的container定义中的项目">resourceFieldRef，即可以暴露的container定义中的项目：</h4>
+<ul>
+<li>A Container’s CPU limit</li>
+<li>A Container’s CPU request</li>
+<li>A Container’s memory limit</li>
+<li>A Container’s memory request</li>
+</ul>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[LDAP使用记录]]></title>
+        <id>https://stardemo.github.io/post/ldap-shi-yong-ji-lu/</id>
+        <link href="https://stardemo.github.io/post/ldap-shi-yong-ji-lu/">
+        </link>
+        <updated>2020-12-11T07:00:44.000Z</updated>
+        <content type="html"><![CDATA[<!-- more -->
+<h2 id="rancher访问ldap的默认规则">Rancher访问LDAP的默认规则</h2>
+<h3 id="用户">用户</h3>
+<pre><code>搜索起点: ou=Users,dc=thecover,dc=cn
+对象分类: inetOrgPerson
+登录字段: uid
+名称字段: cn
+搜索字段: uid|sn|givenName
+启用字段:
+禁用位掩码: 0
+</code></pre>
+<h3 id="用户组">用户组</h3>
+<pre><code>搜索起点: ou=Groups,dc=thecover,dc=cn
+对象分类: groupOfNames
+名称字段: cn
+搜索字段: cn
+</code></pre>
+<h3 id="创建只读用户">创建只读用户</h3>
+<ul>
+<li>创建用户（可以用管理工具创建同objectClass的用户）</li>
+</ul>
+<pre><code>#密码
+LDAP_READONLY_USER_PW='密码'
+#Base DN
+LDAP_BASE_DN='dc=thecover,dc=cn'
+cat &lt;&lt;EOF &gt; ./readOnly.ldif
+dn: cn=readonly,${LDAP_BASE_DN}
+cn: readonly
+objectClass: simpleSecurityObject
+objectClass: organizationalRole
+description: LDAP read only user
+userPassword: ${LDAP_READONLY_USER_PW}
+EOF
+</code></pre>
+<p>命令行增加用户</p>
+<pre><code>ldapadd -x -D cn=Manager,dc=okcoin,dc=com -w '密码' -f ./readOnly.ldif
+</code></pre>
+<ul>
+<li>配置权限</li>
+</ul>
+<pre><code>LDAP_BASE_DN='dc=thecover,dc=cn'
+cat &lt;&lt;EOF &gt; readonly-user-acl.ldif
+dn: olcDatabase={1}hdb,cn=config
+changetype: modify
+delete: olcAccess
+-
+add: olcAccess
+olcAccess: {0}to attrs=userPassword,shadowLastChange 
+ by dn=&quot;cn=admin,dc=thecover,dc=cn&quot; write 
+ by anonymous auth 
+ by self write 
+ by dn=&quot;cn=readonly,dc=thecover,dc=cn&quot; read 
+ by * none
+olcAccess: {1}to dn.base=&quot;&quot; by * read
+olcAccess: {2}to * by dn=&quot;cn=Manager,dc=thecover,dc=cn&quot; write by * read
+EOF
+</code></pre>
+<pre><code>ldapmodify -Y EXTERNAL -H ldapi:/// -f readonly-user-acl.ldif
+</code></pre>
+<ul>
+<li>备注<br>
+配置权限时需要使用</li>
+</ul>
+<pre><code>slapcat -b cn=config
+</code></pre>
+<p>定位<code>olcDatabase</code> <code>config</code>的位置</p>
+<h2 id="ldap增加memberof属性">Ldap增加memberOf属性</h2>
+<p>https://www.linuxprobe.com/enable-memberof-openldap.html<br>
+https://kifarunix.com/how-to-create-openldap-member-groups/</p>
+<h2 id="配置缓存">配置缓存</h2>
+<h3 id="删除旧配置">删除旧配置</h3>
+<pre><code class="language-shell">cat &gt;&gt; del-1mdb-index.ldif &lt;&lt; EOF
+dn: olcDatabase={1}mdb, cn=config
+changetype:modify
+delete: olcDbIndex
+olcDbIndex: uid eq
+EOF
+ ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f del-1mdb-index.ldif
+</code></pre>
+<h3 id="新增配置">新增配置</h3>
+<pre><code class="language-shell">cat &gt;&gt; mdb-index.ldif &lt;&lt; EOF
+dn: olcDatabase={1}mdb, cn=config
+changetype:modify
+add:olcDbIndex
+olcDbIndex: uid pres,eq,sub
+EOF
+ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f mdb-index.ldif
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[阿里云K8s实践笔记]]></title>
+        <id>https://stardemo.github.io/post/a-li-yun-k8s-zui-jia-shi-jian-bi-ji/</id>
+        <link href="https://stardemo.github.io/post/a-li-yun-k8s-zui-jia-shi-jian-bi-ji/">
+        </link>
+        <updated>2020-09-16T03:36:16.000Z</updated>
+        <summary type="html"><![CDATA[<p>记录使用阿里云ACK容器服务以及阿里云的各服务的总结笔记</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>记录使用阿里云ACK容器服务以及阿里云的各服务的总结笔记</p>
+<!-- more -->
+<h2 id="1-配置阿里云slb到集群的ingress">1. 配置阿里云SLB到集群的Ingress</h2>
+<h3 id="11-同时使用私网slb与公网slb配合">1.1 同时使用私网SLB与公网SLB配合</h3>
+<p><em>对于一些特殊场景，您期望容器集群内的服务既能允许公网访问，同时又希望能被同一个VPC下的其他服务直接访问（不经过公网）。您只需额外部署一个kube-system/nginx-ingress-lb-intranet服务。</em></p>
+<p>使用阿里云创建的容器集群默认已经创建了一个绑定到公网的SLB，位于<code>kube-system</code>下。创建一个符合期望配置的内网SLB实例，新增一个Service描述，使集群自动绑定监听到SLB。</p>
+<p>配置模版</p>
+<pre><code class="language-yaml"># intranet nginx ingress slb service
+apiVersion: v1
+kind: Service
+metadata:
+ # 这里服务取名为nginx-ingress-lb-intranet
+ name: nginx-ingress-lb-intranet
+ namespace: kube-system
+ labels:
+   app: nginx-ingress-lb-intranet
+ annotations:
+   # 指明SLB实例地址类型为私网类型
+   service.beta.kubernetes.io/alicloud-loadbalancer-address-type: intranet
+   # 修改为您的私网SLB实例ID
+   service.beta.kubernetes.io/alicloud-loadbalancer-id: &lt;YOUR_INTRANET_SLB_ID&gt;
+   # 是否自动创建SLB端口监听（会覆写已有端口监听），也可手动创建端口监听
+   service.beta.kubernetes.io/alicloud-loadbalancer-force-override-listeners: 'true'
+spec:
+ type: LoadBalancer
+ # route traffic to other nodes
+ externalTrafficPolicy: &quot;Cluster&quot;
+ ports:
+ - port: 80
+   name: http
+   targetPort: 80
+ - port: 443
+   name: https
+   targetPort: 443
+ selector:
+   # select app=ingress-nginx pods
+   app: ingress-nginx
+</code></pre>
+<p>创建服务之后通过如下命令,查看svc状态</p>
+<pre><code class="language-shell"> kubectl -n kube-system get svc | grep nginx-ingress-lb
+</code></pre>
+<h2 id="2-coredns的特殊用法">2. CoreDNS的特殊用法</h2>
+<h3 id="21-coredns拦截域名解析">2.1 CoreDNS拦截域名解析</h3>
+<p>在内网多个集群的场景下，有些域名需要解析到内网避免出现公网流量，之前处理方案有如下几种:</p>
+<ul>
+<li>在VPC内网内自建一个DNS服务器，将所有服务器的DNS指向自建的DNS服务器
+<ul>
+<li>问题: 需要考虑到DNS的高可用以及故障容灾难</li>
+<li>优势: 集中化,便于统一维护管理更新</li>
+</ul>
+</li>
+<li>在主机配置Hosts文件
+<ul>
+<li>问题: 主机较多，维护成本上涨</li>
+<li>优势: 操作简单，技术成本较低</li>
+</ul>
+</li>
+<li>K8s容器集群内CoreDNS</li>
+</ul>
+<p>Kubernetes本身具有集群DNS组件，此处使用的为CoreDNS，工作负载的DNS默认策略为<code>ClusterFirst</code>,此时Pods内程序解析DNS会优先查询集群的DNS组件，所以此时可以在集群DNS层面进行解析拦截覆盖。</p>
+<p>CoreDNS的配置使用的ConfigMap,而ConfigMap支持热更新,修改ConfigMap后CoreDNS自动生效。配置如下:</p>
+<pre><code>.:5353 {
+cache 30
+errors
+health
+kubernetes cluster.local in-addr.arpa ip6.arpa {
+pods insecure
+upstream /etc/resolv.conf
+fallthrough in-addr.arpa ip6.arpa
+}
+loadbalance round_robin
+hosts {
+122.212.222.111 aaa.bbb.com
+fallthrough
+}
+prometheus 0.0.0.0:9153
+proxy . /etc/resolv.conf
+reload
+}
+</code></pre>
+<p>把需要的DNS规格写入Hosts节点下，即可进行集群层面的解析配置。</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[使用nc检测TCP/UDP端口开放]]></title>
+        <id>https://stardemo.github.io/post/shi-yong-nc-jian-ce-tcpudp-duan-kou-kai-fang/</id>
+        <link href="https://stardemo.github.io/post/shi-yong-nc-jian-ce-tcpudp-duan-kou-kai-fang/">
+        </link>
+        <updated>2020-08-18T13:40:09.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="telnet-检测tcp端口">Telnet 检测TCP端口</h1>
+<pre><code class="language-shell">[root@localhost ~]# telnet 127.0.0.1 8080
+Trying 127.0.0.1...
+Connected to 127.0.0.1.
+Escape character is '^]'.
+^CConnection closed by foreign host.
+</code></pre>
+<h1 id="nc-检测tcp端口">NC 检测TCP端口</h1>
+<pre><code class="language-shell">[root@localhost ~]# nc -vz 127.0.0.1 8906
+Connection to 127.0.0.1 8906 port [tcp/*] succeeded!
+</code></pre>
+<h1 id="nc-检测udp端口">NC 检测UDP端口</h1>
+<p><code>检测udp端口的时候不会立即返回测试结果，可能需要等待几秒钟</code></p>
+<pre><code class="language-shell">[root@apexsoft ~]# nc -uz 127.0.0.1 8907
+Connection to 127.0.0.1 8907 port [udp/*] succeeded!
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Nginx根据UA过滤请求]]></title>
+        <id>https://stardemo.github.io/post/nginx-gen-ju-ua-guo-lu-qing-qiu/</id>
+        <link href="https://stardemo.github.io/post/nginx-gen-ju-ua-guo-lu-qing-qiu/">
+        </link>
+        <updated>2020-05-26T08:46:34.000Z</updated>
+        <summary type="html"><![CDATA[<p>有需求一个系统只允许微信和钉钉访问，所以配置Nginx规则过滤UA</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>有需求一个系统只允许微信和钉钉访问，所以配置Nginx规则过滤UA</p>
+<!-- more -->
+<h1 id="配置文件">配置文件</h1>
+<pre><code class="language-nginx">server {
+    listen       80;
+    server_name  localhost;
+    set $flag 0;
+    if ($http_user_agent !~ &quot;MicroMessenger&quot; ){
+        set $flag &quot;${flag}1&quot;;
+    }
+    if ( $http_user_agent !~ &quot;DingTalk&quot; ){
+        set $flag &quot;${flag}2&quot;;
+    }
+    if ($flag = &quot;012&quot;) {
+        return 403;
+    }
+    location / {
+        root   /usr/share/nginx/html;
+        index  index.html index.htm;
+    }
+    #error_page  404              /404.html;
+    # redirect server error pages to the static page /50x.html
+    error_page   500 502 503 504  /50x.html;
+    location = /50x.html {
+        root   /usr/share/nginx/html;
+    }
+}
+</code></pre>
+<h1 id="踩过的坑">踩过的坑</h1>
+<h2 id="一-nginx多条件判断">一. Nginx多条件判断</h2>
+<h2 id="问题">问题</h2>
+<p><em>nginx的配置中不支持if条件的逻辑与、逻辑或运算 ，并且不支持if的嵌套语法</em>*</p>
+<h2 id="解法">解法</h2>
+<p>定义变量,判断变量状态。</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[[React]React实战(1)——Ant Design Pro项目history模式下相关配置]]></title>
+        <id>https://stardemo.github.io/post/reactreact-shi-zhan-1-ant-design-pro-xiang-mu-history-mo-shi-xia-xiang-guan-pei-zhi/</id>
+        <link href="https://stardemo.github.io/post/reactreact-shi-zhan-1-ant-design-pro-xiang-mu-history-mo-shi-xia-xiang-guan-pei-zhi/">
+        </link>
+        <updated>2020-05-25T07:14:57.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="相关链接">相关链接</h1>
+<p><a href="https://pro.ant.design/docs/deploy-cn">AntDesign文档</a></p>
+<h1 id="nginx-配置文件修改">Nginx 配置文件修改</h1>
+<h2 id="完整配置">完整配置</h2>
+<pre><code class="language-nginx">server {
+    listen       80;
+    server_name  localhost;
+    location / { 
+    proxy_pass http://localhost:8000;
+    }
+  location /active {
+      try_files $uri $uri/ /healthy/index.html;
+  }
+
+  location /healthy/api {
+       proxy_pass   http://localhost:8888/;
+  }
+    error_page   500 502 503 504  /50x.html;
+    location = /50x.html {
+        root   /usr/share/nginx/html;
+    }
+}
+</code></pre>
+<h2 id="8000端口下nginx配置">8000端口下nginx配置</h2>
+<pre><code class="language-nginx">server {
+    listen  8000;
+    server_name   localhost;
+    location / {
+        root   /usr/project/;
+        try_files $uri $uri/ /index.html;  #配合react项目的history模式去除#时用到
+        index index.html;
+        client_max_body_size    8m;
+    }
+}
+</code></pre>
+<h2 id="配置文件说明">配置文件说明</h2>
+<ul>
+<li>使用try_files方式的前提是服务器安装nginx的时候需要安装相应的模块，我是通过yarn源的方式安装的，包含了所有模块，所以可以直接使用</li>
+<li>80端口下根目录会指向8000端口（习惯把项目都放在8000端口下指向的project目录下），同时添加/active访问拦截指向healthy目录下index.html，同时添加/healthy/api是为了拦截接口访问</li>
+<li>8000端口下root指向的是/usr/project/，此目录放置所有前端项目文件夹，一些node服务端项目也可以放进去</li>
+</ul>
+<h1 id="ant-design-pro项目中相关配置">Ant Design Pro项目中相关配置</h1>
+<h2 id="修改config文件">修改config文件</h2>
+<p>项目目录下config/config.js</p>
+<pre><code class="language-javascript">export default {
+  plugins,
+  proxy,
+  block: {
+    defaultGitUrl: 'https://github.com/ant-design/pro-blocks',
+  },
+  hash: false, // browser 模式下为false, hash 模式下为true
+  history: 'browser', // 默认是 browser ， hash
+  base: '/healthy/', // browser 模式下为 /healthy/ ， hash模式下为 /
+  publicPath: '/healthy/', // 模式下为 /healthy/ ， hash模式下为 ./
+  targets: {
+    ie: 11,
+  },
+  devtool: isAntDesignProPreview ? 'source-map' : false,
+}
+</code></pre>
+<h2 id="引用外部文件">引用外部文件</h2>
+<p>pages/document.ejs中引用的外部文件</p>
+<pre><code class="language-html">&lt;link rel=&quot;shortcut icon&quot; href=&quot;./favicon.ico&quot;&gt;
+</code></pre>
+<h2 id="接口调用配置">接口调用配置</h2>
+<pre><code class="language-javascript">// config/config.js配置文件
+global.api = '/healthy/api'
+// 调用接口页面
+let response = await axios.get(`${global.api}/dtea-service/user/result?examId=${this.questionId}`);
+</code></pre>
+<p>为了本地项目和发布至服务器打包文件保持一致，可以把项目中本地代理修改下</p>
+<pre><code class="language-javascript">const proxy = {
+  '/healthy/api': {
+    target: 'http://192.136.12.211:8888',
+    changeOrigin: true,
+    pathRewrite: {
+      '^/healthy/api': '',
+    },
+  },
+};
+}
+</code></pre>
+<p>作者：wayne1125<br>
+链接：https://www.jianshu.com/p/16de172d0d45<br>
+来源：简书<br>
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[[Go]make和new关键字的区别及实现原理]]></title>
+        <id>https://stardemo.github.io/post/diff-make-and-new/</id>
+        <link href="https://stardemo.github.io/post/diff-make-and-new/">
+        </link>
+        <updated>2020-05-21T03:16:43.000Z</updated>
+        <summary type="html"><![CDATA[<p>Go 中经常初始化结构体，对于初始化方式的一些深入理解。</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>Go 中经常初始化结构体，对于初始化方式的一些深入理解。</p>
+<!-- more -->
+<p>当我们想要在Go语言中初始化一个结构时，其实会使用到两个完全不同的关键字，也就是 make 和 new，同时出现两个用于初始化的关键字对于初学者来说可能会感到非常困惑，不过它们两者却有着完全不同的作用。</p>
+<p>在Go语言中，make 关键字的主要作用是初始化内置的数据结构，也就是我们在前面提到的数组、切片和 Channel，而当我们想要获取指向某个类型的指针时可以使用 new 关键字，只是知道如何使用 new 的人真的比较少，下面我们就来介绍一下 make 和 new 它们的区别以及实现原理。</p>
+<h1 id="概述">概述</h1>
+<p>虽然 make 和 new 都是能够用于初始化数据结构，但是它们两者能够初始化的结构类型却有着较大的不同，make 在Go语言中只能用于初始化语言中的基本类型：</p>
+<pre><code class="language-go">slice := make([]int, 0, 100)
+hash := make(map[int]bool, 10)
+ch := make(chan int, 5)
+</code></pre>
+<p>这些基本类型都是语言为我们提供的，我们在前面已经介绍过了它们初始化的过程以及原理，但是在这里还是需要提醒大家注意的是，这三者返回了不同类型的数据结构：</p>
+<ul>
+<li>slice 是一个包含 data、cap 和 len 的结构体；</li>
+<li>hash 是一个指向 hmap 结构体的指针；</li>
+<li>ch 是一个指向 hchan 结构体的指针。</li>
+</ul>
+<p>而另一个用于初始化数据结构的关键字 new 的作用其实就非常简单了，它只是接收一个类型作为参数然后返回一个指向这个类型的指针：</p>
+<pre><code class="language-go">i := new(int)
+var v int
+i := &amp;v
+</code></pre>
+<p>上述代码片段中的两种不同初始化方法其实是等价的，它们都会创建一个指向 int 零值的指针。<br>
+<img src="https://stardemo.github.io/post-images/1590031666594.jpeg" alt="" loading="lazy"><br>
+到了这里我们对Go语言中这两种不同关键字的使用也有了一定的了解：<code>make 用于创建切片、哈希表和管道等内置数据结构，new 用于分配并创建一个指向对应类型的指针</code>。</p>
+<h1 id="实现原理">实现原理</h1>
+<p>接下来我们将分别介绍 make 和 new 在初始化不同数据结构时的具体过程，我们会从编译期间和运行时两个不同的阶段理解这两个关键字的原理。</p>
+<h2 id="make">make</h2>
+<p>我们已经了解了 make 在创建数组和切片、哈希表和 Channel 的具体过程，所以在这里我们也只是会简单提及 make 相关的数据结构初始化原理。<br>
+<img src="https://stardemo.github.io/post-images/1590031718876.gif" alt="" loading="lazy"><br>
+在编译期间的类型检查阶段，Go语言其实就将代表 make 关键字的 OMAKE 节点根据参数类型的不同转换成了 OMAKESLICE、OMAKEMAP 和 OMAKECHAN 三种不同类型的节点，这些节点最终也会调用不同的运行时函数来初始化数据结构。</p>
+<h2 id="new">new</h2>
+<p>内置函数 new 会在编译期间的 SSA 代码生成阶段经过 callnew 函数的处理，如果请求创建的类型大小是 0，那么就会返回一个表示空指针的 zerobase 变量，在遇到其他情况时会将关键字转换成 newobject：</p>
+<pre><code class="language-go">func callnew(t *types.Type) *Node {
+    if t.NotInHeap() {
+        yyerror(&quot;%v is go:notinheap; heap allocation disallowed&quot;, t)
+    }
+    dowidth(t)
+ 
+    if t.Size() == 0 {
+        z := newname(Runtimepkg.Lookup(&quot;zerobase&quot;))
+        z.SetClass(PEXTERN)
+        z.Type = t
+        return typecheck(nod(OADDR, z, nil), ctxExpr)
+    }
+ 
+    fn := syslook(&quot;newobject&quot;)
+    fn = substArgTypes(fn, t)
+    v := mkcall1(fn, types.NewPtr(t), nil, typename(t))
+    v.SetNonNil(true)
+    return v
+}
+</code></pre>
+<p>需要提到的是，哪怕当前变量是使用 var 进行初始化，在这一阶段也可能会被转换成 newobject 的函数调用并在堆上申请内存：</p>
+<pre><code class="language-go">func walkstmt(n *Node) *Node {
+    switch n.Op {
+    case ODCL:
+        v := n.Left
+        if v.Class() == PAUTOHEAP {
+            if prealloc[v] == nil {
+                prealloc[v] = callnew(v.Type)
+            }
+            nn := nod(OAS, v.Name.Param.Heapaddr, prealloc[v])
+            nn.SetColas(true)
+            nn = typecheck(nn, ctxStmt)
+            return walkstmt(nn)
+        }
+    case ONEW:
+        if n.Esc == EscNone {
+            r := temp(n.Type.Elem())
+            r = nod(OAS, r, nil)
+            r = typecheck(r, ctxStmt)
+            init.Append(r)
+            r = nod(OADDR, r.Left, nil)
+            r = typecheck(r, ctxExpr)
+            n = r
+        } else {
+            n = callnew(n.Type.Elem())
+        }
+    }
+}
+</code></pre>
+<p>当然这也不是绝对的，如果当前声明的变量或者参数不需要在当前作用域外生存，那么其实就不会被初始化在堆上，而是会初始化在当前函数的栈中并随着函数调用的结束而被销毁。</p>
+<p>newobject 函数的工作就是获取传入类型的大小并调用 mallocgc 在堆上申请一片大小合适的内存空间并返回指向这片内存空间的指针：</p>
+<pre><code>func newobject(typ *_type) unsafe.Pointer {
+    return mallocgc(typ.size, typ, true)
+}
+</code></pre>
+<h1 id="总结">总结</h1>
+<p>最后，简单总结一下Go语言中 make 和 new 关键字的实现原理，make 关键字的主要作用是创建切片、哈希表和 Channel 等内置的数据结构，而 new 的主要作用是为类型申请一片内存空间，并返回指向这片内存的指针。</p>
+<p>————————————————<br>
+版权声明：本文为CSDN博主「浅汐王」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
+原文链接：https://blog.csdn.net/qq_32252917/java/article/details/102953438</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Kubernetes日志采集Sidecar模式介绍]]></title>
+        <id>https://stardemo.github.io/post/kubernetes-ri-zhi-cai-ji-sidecar-mo-shi-jie-shao/</id>
+        <link href="https://stardemo.github.io/post/kubernetes-ri-zhi-cai-ji-sidecar-mo-shi-jie-shao/">
+        </link>
+        <updated>2020-05-11T07:05:52.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="日志采集方式">日志采集方式</h2>
+<p>日志作为任一系统不可或缺的部分，在K8S的官方文档中也介绍了多种的日志采集形式，总结起来主要有下述3种：原生方式、DaemonSet方式和Sidecar方式。</p>
+<ol>
+<li>原生方式：使用 kubectl logs 直接在查看本地保留的日志，或者通过docker engine的 log driver 把日志重定向到文件、syslog、fluentd等系统中。</li>
+<li>DaemonSet方式：在K8S的每个node上部署日志agent，由agent采集所有容器的日志到服务端。</li>
+<li>Sidecar方式：一个POD中运行一个sidecar的日志agent容器，用于采集该POD主容器产生的日志。</li>
+</ol>
+<figure data-type="image" tabindex="1"><img src="https://stardemo.github.io/post-images/1589181137428.png" alt="" loading="lazy"></figure>
+<h2 id="采集方式对比">采集方式对比</h2>
+<p>每种采集方式都有一定的优劣势，这里我们进行简单的对比：</p>
+<figure data-type="image" tabindex="2"><img src="https://stardemo.github.io/post-images/1589180900695.png" alt="" loading="lazy"></figure>
+<p>从上述表格中可以看出：</p>
+<ol>
+<li>原生方式相对功能太弱，一般不建议在生产系统中使用，否则问题调查、数据统计等工作很难完成；</li>
+<li>DaemonSet方式在每个节点只允许一个日志agent，相对资源占用要小很多，但扩展性、租户隔离性受限，比较适用于功能单一或业务不是很多的集群；</li>
+<li>Sidecar方式为每个POD单独部署日志agent，相对资源占用较多，但灵活性以及多租户隔离性较强，建议大型的K8S集群或作为PAAS平台为多个业务方服务的集群使用该方式。</li>
+</ol>
+<pre><code>作者：阿里云云栖号
+链接：https://www.jianshu.com/p/72f34de4dd35
+来源：简书
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Hello Gridea]]></title>
+        <id>https://stardemo.github.io/post/hello-gridea-blog/</id>
+        <link href="https://stardemo.github.io/post/hello-gridea-blog/">
+        </link>
+        <updated>2020-04-18T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[<p>👏  博客搬家啦  <strong>Github Pages</strong> ！<br>
+👏  文章逐渐迁移整理中🙏 ！<br>
+👏  欢迎使用 <strong>Gridea</strong> ！<br>
+...</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>👏  博客搬家啦  <strong>Github Pages</strong> ！<br>
+👏  文章逐渐迁移整理中🙏 ！<br>
+👏  欢迎使用 <strong>Gridea</strong> ！<br>
+...</p>
+<!-- more -->
+<p>✍️  <strong>Gridea</strong> 一个静态博客写作客户端。你可以用它来记录你的生活、心情、知识、笔记、创意...<br>
+<a href="https://github.com/getgridea/gridea">Github</a><br>
+<a href="https://gridea.dev/">Gridea 主页</a><br>
+<a href="http://fehey.com/">示例网站</a></p>
+<h2 id="特性">特性👇</h2>
+<p>📝  你可以使用最酷的 <strong>Markdown</strong> 语法，进行快速创作</p>
+<p>🌉  你可以给文章配上精美的封面图和在文章任意位置插入图片</p>
+<p>🏷️  你可以对文章进行标签分组</p>
+<p>📋  你可以自定义菜单，甚至可以创建外部链接菜单</p>
+<p>💻  你可以在 <strong>Windows</strong>，<strong>MacOS</strong> 或 <strong>Linux</strong> 设备上使用此客户端</p>
+<p>🌎  你可以使用 <strong>𝖦𝗂𝗍𝗁𝗎𝖻 𝖯𝖺𝗀𝖾𝗌</strong> 或 <strong>Coding Pages</strong> 向世界展示，未来将支持更多平台</p>
+<p>💬  你可以进行简单的配置，接入 <a href="https://github.com/gitalk/gitalk">Gitalk</a> 或 <a href="https://github.com/SukkaW/DisqusJS">DisqusJS</a> 评论系统</p>
+<p>🇬🇧  你可以使用<strong>中文简体</strong>或<strong>英语</strong></p>
+<p>🌁  你可以任意使用应用内默认主题或任意第三方主题，强大的主题自定义能力</p>
+<p>🖥  你可以自定义源文件夹，利用 OneDrive、百度网盘、iCloud、Dropbox 等进行多设备同步</p>
+<p>🌱 当然 <strong>Gridea</strong> 还很年轻，有很多不足，但请相信，它会不停向前 🏃</p>
+<p>未来，它一定会成为你离不开的伙伴</p>
+<p>尽情发挥你的才华吧！</p>
+<p>😘 Enjoy~</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Linux 常用命令dig]]></title>
+        <id>https://stardemo.github.io/post/linux-chang-yong-ming-ling-dig/</id>
+        <link href="https://stardemo.github.io/post/linux-chang-yong-ming-ling-dig/">
+        </link>
+        <updated>2020-04-16T02:48:37.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="一-安装">一. 安装</h1>
+<ul>
+<li>1.Ubuntu/Debian安装</li>
+</ul>
+<pre><code class="language-shell">sudo apt-get install dnsutils
+</code></pre>
+<ul>
+<li>2.CentOs/RedHat安装</li>
+</ul>
+<pre><code>yum install bind-utils -y
+</code></pre>
+<h1 id="二-使用">二. 使用</h1>
+<ul>
+<li>1.简单查询</li>
+</ul>
+<pre><code class="language-shell">dig DOMAIN　
+</code></pre>
+<ul>
+<li>2.按记录类型查询，默认为A记录</li>
+</ul>
+<pre><code class="language-shell">dig DOMAIN cname
+dig DOMAIN mx
+dig DOMAIN AAAA
+</code></pre>
+<ul>
+<li>3.指定DNS服务器</li>
+</ul>
+<pre><code class="language-shell">dig  DOMAIN MX  8.8.8.8
+</code></pre>
+<ul>
+<li>4.从根域逐步查询的过程：+trace</li>
+</ul>
+<pre><code class="language-shell">dig DOMAIN +trace
+</code></pre>
+<ul>
+<li>5.返回简洁的查询结果</li>
+</ul>
+<pre><code class="language-shell">dig DOMAIN +short
+</code></pre>
+]]></content>
+    </entry>
+</feed>
