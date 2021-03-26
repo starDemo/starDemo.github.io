@@ -8,7 +8,7 @@
 <meta name="keywords" content="starliu,istarboy,个人博客,运维,技术备忘录,docker,kubernetes,iot">
 <meta name="description" content="一个技术爱好者的备忘录">
 <meta name="theme-color" content="#000">
-<title>iCloud Drive同步文件时，忽略指定目录 | Zone</title>
+<title>在macOS下启用CGO_ENABLED的交叉编译 | Zone</title>
 <link rel="shortcut icon" href="/favicon.ico?v=1616761544563">
 <link rel="stylesheet" href="/styles/main.css">
 <link rel="stylesheet" href="/media/css/gemini.css">
@@ -29,7 +29,7 @@
 
 
 
-  <meta name="description" content="iCloud Drive同步文件时，忽略指定目录" />
+  <meta name="description" content="在macOS下启用CGO_ENABLED的交叉编译" />
   <meta name="keywords" content="" />
 </head>
 
@@ -264,11 +264,17 @@
   <div class="toc-wrapper auto-number auto"
     id="toc_wrapper">
     <ul class="markdownIt-TOC">
-<li><a href="#%E5%8A%A8%E6%9C%BA">动机：</a></li>
-<li><a href="#%E8%A7%A3%E6%B3%95">解法</a>
+<li>
 <ul>
-<li><a href="#%E5%8E%9F%E6%96%87%E6%8F%8F%E8%BF%B0">原文描述</a></li>
-<li><a href="#%E5%AE%9E%E8%B7%B5">实践</a></li>
+<li><a href="#%E5%9C%A8macos%E4%B8%8B%E5%90%AF%E7%94%A8cgo_enabled%E7%9A%84%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91">在macOS下启用CGO_ENABLED的交叉编译</a></li>
+<li><a href="#%E5%AE%89%E8%A3%85mingw-w64">安装mingw-w64</a></li>
+<li><a href="#%E7%BC%96%E8%AF%91x64">编译x64</a>
+<ul>
+<li><a href="#%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6">可执行文件</a></li>
+<li><a href="#%E9%9D%99%E6%80%81%E5%BA%93">静态库</a></li>
+<li><a href="#%E5%8A%A8%E6%80%81%E5%BA%93">动态库</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -536,8 +542,8 @@
           <div class="section bg-color post post-page">
             <header class="post-header">
   <h1 class="post-title">
-    <a class="post-title-link" href="https://stardemo.github.io/post/icloud-drive-tong-bu-wen-jian-shi-hu-lue-zhi-ding-mu-lu/">
-      iCloud Drive同步文件时，忽略指定目录
+    <a class="post-title-link" href="https://stardemo.github.io/post/zai-macos-xia-qi-yong-cgo_enabled-de-jiao-cha-bian-yi/">
+      在macOS下启用CGO_ENABLED的交叉编译
     </a>
   </h1>
   <div class="post-meta">
@@ -545,23 +551,23 @@
     <span class="meta-item pc-show">
       <i class="fa fa-calendar-o"></i>
       <span>发布于</span>
-      <span>2020-04-03</span>
+      <span>2021-03-26</span>
       <span class="post-meta-divider pc-show">|</span>
     </span>
     
     <span class="meta-item">
       <i class="fa fa-clock-o"></i>
-      <span>1分钟</span>
+      <span>3分钟</span>
     </span>
     <span class="meta-item">
       <span class="post-meta-divider">|</span>
       <i class="fa fa-file-word-o"></i>
-      <span>165<span class="pc-show">字数</span></span>
+      <span>479<span class="pc-show">字数</span></span>
     </span>
     
     
     
-    <span id="/post/icloud-drive-tong-bu-wen-jian-shi-hu-lue-zhi-ding-mu-lu/" data-flag-title="iCloud Drive同步文件时，忽略指定目录" class="meta-item pc-show leancloud_visitors">
+    <span id="/post/zai-macos-xia-qi-yong-cgo_enabled-de-jiao-cha-bian-yi/" data-flag-title="在macOS下启用CGO_ENABLED的交叉编译" class="meta-item pc-show leancloud_visitors">
       <span class="post-meta-divider">|</span>
       <i class="fa fa-eye"></i>
       <span>浏览量：<span class="leancloud-visitors-count"></span></span>
@@ -570,25 +576,56 @@
   </div>
 </header>
             <div class="post-body next-md-body" id="post_body">
-              <h1 id="动机">动机：</h1>
-<p>使用<code>Gridea</code>书写博客使用iCloud Drive进行目录同步，将数据目录设置到<code>iCloud Drive</code>下，但是并不想每次同步渲染结果的<code>output</code>目录。</p>
-<h1 id="解法">解法</h1>
-<p>查询自 - 知乎 <a href="%22https://www.zhihu.com/question/300993426/answer/539337720%22">iCloud Drive同步文件时，如何忽略指定目录？</a></p>
-<h2 id="原文描述">原文描述</h2>
-<pre><code class="language-bash"># it is okay to delete the target folder since it will be rebuilt by maven
-rm -r target
-# create a nosync folder which will not be in iCloud
-mkdir target.nosync
-# create a symbolic link named &quot;target&quot; so that maven can find the target.nosync folder
-ln -s `pwd`/target.nosync target
-# rebuild the project
-mvn package
+              <p>go 启用CGO_ENABLED遇到报错的解决方案<br>
+<code>gcc_libinit_windows.c:7:10: fatal error: 'windows.h' file not found</code></p>
+<!-- more -->
+<h2 id="在macos下启用cgo_enabled的交叉编译">在macOS下启用CGO_ENABLED的交叉编译</h2>
+<p>在启用CGO_ENABLED的情况下，尝试使用下面命令进行Windows平台的交叉编译：</p>
+<pre><code class="language-shell">$ CGO_ENABLED=1 GOOS=windows GOARCH=386 go build -x -v -ldflags &quot;-s -w&quot;
 </code></pre>
-<h2 id="实践">实践</h2>
-<pre><code class="language-bash"> ~/Library/Mobile Documents/com~apple~CloudDocs/Gridea : rm -rf output
- ~/Library/Mobile Documents/com~apple~CloudDocs/Gridea : mkdir output.nosync
- ~/Library/Mobile Documents/com~apple~CloudDocs/Gridea : ln -s output.nosync output
+<p>出现错误如下：</p>
+<pre><code class="language-shell"># runtime/cgo
+gcc_libinit_windows.c:7:10: fatal error: 'windows.h' file not found
 </code></pre>
+<h2 id="安装mingw-w64">安装mingw-w64</h2>
+<pre><code class="language-shell">$ brew install mingw-w64
+==&gt; Downloading https://homebrew.bintray.com/bottles/isl-0.22.1.big_sur.bottle.tar.gz
+==&gt; Downloading from https://d29vzk4ow07wi7.cloudfront.net/15376fb7aff7adec3786e6a31ec9b5cad585fd01ecbd5c4744ef9461b10965ff?response-content-disposition=attachment%3Bfilename%3D%22isl-0.22.1.big_sur.bottle.tar.gz%22&amp;Policy=eyJTdGF0Z
+######################################################################## 100.0%
+==&gt; Downloading https://homebrew.bintray.com/bottles/mpfr-4.1.0.big_sur.bottle.tar.gz
+==&gt; Downloading from https://d29vzk4ow07wi7.cloudfront.net/1e8eb0326f62d3461d420d98af6fc088daca481cae89fd77a75b420d2e76d776?response-content-disposition=attachment%3Bfilename%3D%22mpfr-4.1.0.big_sur.bottle.tar.gz%22&amp;Policy=eyJTdGF0Z
+######################################################################## 100.0%
+==&gt; Downloading https://homebrew.bintray.com/bottles/libmpc-1.2.1.big_sur.bottle.tar.gz
+######################################################################## 100.0%
+==&gt; Downloading https://homebrew.bintray.com/bottles/mingw-w64-8.0.0.catalina.bottle.tar.gz
+==&gt; Downloading from https://d29vzk4ow07wi7.cloudfront.net/d294bc0e960294bf573b9da364a8d95a06a257aec8f388c16e2b975ed8e4410c?response-content-disposition=attachment%3Bfilename%3D%22mingw-w64-8.0.0.catalina.bottle.tar.gz%22&amp;Policy=eyJ
+######################################################################## 100.0%
+==&gt; Installing dependencies for mingw-w64: isl, mpfr and libmpc
+==&gt; Installing mingw-w64 dependency: isl
+==&gt; Pouring isl-0.22.1.big_sur.bottle.tar.gz
+🍺  /usr/local/Cellar/isl/0.22.1: 72 files, 4.9MB
+==&gt; Installing mingw-w64 dependency: mpfr
+==&gt; Pouring mpfr-4.1.0.big_sur.bottle.tar.gz
+🍺  /usr/local/Cellar/mpfr/4.1.0: 30 files, 5.2MB
+==&gt; Installing mingw-w64 dependency: libmpc
+==&gt; Pouring libmpc-1.2.1.big_sur.bottle.tar.gz
+🍺  /usr/local/Cellar/libmpc/1.2.1: 13 files, 425.0KB
+==&gt; Installing mingw-w64
+==&gt; Pouring mingw-w64-8.0.0.catalina.bottle.tar.gz
+🍺  /usr/local/Cellar/mingw-w64/8.0.0: 7,402 files, 854.6MB
+$ which x86_64-w64-mingw32-gcc
+/usr/local/bin/x86_64-w64-mingw32-gcc
+</code></pre>
+<h2 id="编译x64">编译x64</h2>
+<h3 id="可执行文件">可执行文件</h3>
+<pre><code class="language-shell">$ CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc CXX=x86_64-w64-mingw32-g++ GOOS=windows GOARCH=amd64 go build -x -v -ldflags &quot;-s -w&quot; -o app.exe
+</code></pre>
+<h3 id="静态库">静态库</h3>
+<pre><code class="language-shell">$ CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc CXX=x86_64-w64-mingw32-g++ GOOS=windows GOARCH=amd64 go build -buildmode=c-archive -x -v -ldflags &quot;-s -w&quot; -o bin app.go
+</code></pre>
+<h3 id="动态库">动态库</h3>
+<p>将<code>-buildmode=c-archive</code>改为<code>-buildmode=c-shared</code>即可</p>
+<p><em><strong>转载资料 出处:<a href="https://www.dllhook.com/post/244.html">https://www.dllhook.com/post/244.html</a></strong></em></p>
 
             </div>
             <div class="post-footer">
@@ -599,7 +636,7 @@ mvn package
     </li>
     <li class="post-copyright-link">
       <strong>本文链接：</strong>
-      <a href="https://stardemo.github.io/post/icloud-drive-tong-bu-wen-jian-shi-hu-lue-zhi-ding-mu-lu/" title="iCloud Drive同步文件时，忽略指定目录">https://stardemo.github.io/post/icloud-drive-tong-bu-wen-jian-shi-hu-lue-zhi-ding-mu-lu/</a>
+      <a href="https://stardemo.github.io/post/zai-macos-xia-qi-yong-cgo_enabled-de-jiao-cha-bian-yi/" title="在macOS下启用CGO_ENABLED的交叉编译">https://stardemo.github.io/post/zai-macos-xia-qi-yong-cgo_enabled-de-jiao-cha-bian-yi/</a>
     </li>
     <li class="post-copyright-license">
       <strong>版权声明： </strong>
@@ -612,15 +649,11 @@ mvn package
   <div class="nav">
     <div class="nav-prev">
       
-        <i class="fa fa-chevron-left"></i>
-        <a class="nav-pc-next" title="Gitlab-runner使用记录" href="https://stardemo.github.io/post/gitlab-runner-shi-yong-ji-lu/">Gitlab-runner使用记录</a class="nav-pc-next">
-        <a class="nav-mobile-prev" title="Gitlab-runner使用记录" href="https://stardemo.github.io/post/gitlab-runner-shi-yong-ji-lu/">上一篇</a>
-      
     </div>
     <div class="nav-next">
       
-        <a class="nav-pc-next" title="[转]OAuth2 入门" href="https://stardemo.github.io/post/repost-oauth2-get-start/">[转]OAuth2 入门</a>
-        <a class="nav-mobile-next" title="[转]OAuth2 入门" href="https://stardemo.github.io/post/repost-oauth2-get-start/">下一篇</a>
+        <a class="nav-pc-next" title="Kubernetes暴露信息给Pod" href="https://stardemo.github.io/post/kubernetes-bao-lu-xin-xi-gei-pod/">Kubernetes暴露信息给Pod</a>
+        <a class="nav-mobile-next" title="Kubernetes暴露信息给Pod" href="https://stardemo.github.io/post/kubernetes-bao-lu-xin-xi-gei-pod/">下一篇</a>
         <i class="fa fa-chevron-right"></i>
       
     </div>

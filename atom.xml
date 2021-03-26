@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://stardemo.github.io</id>
     <title>Zone</title>
-    <updated>2021-03-01T16:01:13.661Z</updated>
+    <updated>2021-03-26T12:25:58.115Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://stardemo.github.io"/>
     <link rel="self" href="https://stardemo.github.io/atom.xml"/>
@@ -10,6 +10,67 @@
     <logo>https://stardemo.github.io/images/avatar.png</logo>
     <icon>https://stardemo.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, Zone</rights>
+    <entry>
+        <title type="html"><![CDATA[在macOS下启用CGO_ENABLED的交叉编译]]></title>
+        <id>https://stardemo.github.io/post/zai-macos-xia-qi-yong-cgo_enabled-de-jiao-cha-bian-yi/</id>
+        <link href="https://stardemo.github.io/post/zai-macos-xia-qi-yong-cgo_enabled-de-jiao-cha-bian-yi/">
+        </link>
+        <updated>2021-03-26T12:15:00.000Z</updated>
+        <summary type="html"><![CDATA[<p>go 启用CGO_ENABLED遇到报错的解决方案<br>
+<code>gcc_libinit_windows.c:7:10: fatal error: 'windows.h' file not found</code></p>
+]]></summary>
+        <content type="html"><![CDATA[<p>go 启用CGO_ENABLED遇到报错的解决方案<br>
+<code>gcc_libinit_windows.c:7:10: fatal error: 'windows.h' file not found</code></p>
+<!-- more -->
+<h2 id="在macos下启用cgo_enabled的交叉编译">在macOS下启用CGO_ENABLED的交叉编译</h2>
+<p>在启用CGO_ENABLED的情况下，尝试使用下面命令进行Windows平台的交叉编译：</p>
+<pre><code class="language-shell">$ CGO_ENABLED=1 GOOS=windows GOARCH=386 go build -x -v -ldflags &quot;-s -w&quot;
+</code></pre>
+<p>出现错误如下：</p>
+<pre><code class="language-shell"># runtime/cgo
+gcc_libinit_windows.c:7:10: fatal error: 'windows.h' file not found
+</code></pre>
+<h2 id="安装mingw-w64">安装mingw-w64</h2>
+<pre><code class="language-shell">$ brew install mingw-w64
+==&gt; Downloading https://homebrew.bintray.com/bottles/isl-0.22.1.big_sur.bottle.tar.gz
+==&gt; Downloading from https://d29vzk4ow07wi7.cloudfront.net/15376fb7aff7adec3786e6a31ec9b5cad585fd01ecbd5c4744ef9461b10965ff?response-content-disposition=attachment%3Bfilename%3D%22isl-0.22.1.big_sur.bottle.tar.gz%22&amp;Policy=eyJTdGF0Z
+######################################################################## 100.0%
+==&gt; Downloading https://homebrew.bintray.com/bottles/mpfr-4.1.0.big_sur.bottle.tar.gz
+==&gt; Downloading from https://d29vzk4ow07wi7.cloudfront.net/1e8eb0326f62d3461d420d98af6fc088daca481cae89fd77a75b420d2e76d776?response-content-disposition=attachment%3Bfilename%3D%22mpfr-4.1.0.big_sur.bottle.tar.gz%22&amp;Policy=eyJTdGF0Z
+######################################################################## 100.0%
+==&gt; Downloading https://homebrew.bintray.com/bottles/libmpc-1.2.1.big_sur.bottle.tar.gz
+######################################################################## 100.0%
+==&gt; Downloading https://homebrew.bintray.com/bottles/mingw-w64-8.0.0.catalina.bottle.tar.gz
+==&gt; Downloading from https://d29vzk4ow07wi7.cloudfront.net/d294bc0e960294bf573b9da364a8d95a06a257aec8f388c16e2b975ed8e4410c?response-content-disposition=attachment%3Bfilename%3D%22mingw-w64-8.0.0.catalina.bottle.tar.gz%22&amp;Policy=eyJ
+######################################################################## 100.0%
+==&gt; Installing dependencies for mingw-w64: isl, mpfr and libmpc
+==&gt; Installing mingw-w64 dependency: isl
+==&gt; Pouring isl-0.22.1.big_sur.bottle.tar.gz
+🍺  /usr/local/Cellar/isl/0.22.1: 72 files, 4.9MB
+==&gt; Installing mingw-w64 dependency: mpfr
+==&gt; Pouring mpfr-4.1.0.big_sur.bottle.tar.gz
+🍺  /usr/local/Cellar/mpfr/4.1.0: 30 files, 5.2MB
+==&gt; Installing mingw-w64 dependency: libmpc
+==&gt; Pouring libmpc-1.2.1.big_sur.bottle.tar.gz
+🍺  /usr/local/Cellar/libmpc/1.2.1: 13 files, 425.0KB
+==&gt; Installing mingw-w64
+==&gt; Pouring mingw-w64-8.0.0.catalina.bottle.tar.gz
+🍺  /usr/local/Cellar/mingw-w64/8.0.0: 7,402 files, 854.6MB
+$ which x86_64-w64-mingw32-gcc
+/usr/local/bin/x86_64-w64-mingw32-gcc
+</code></pre>
+<h2 id="编译x64">编译x64</h2>
+<h3 id="可执行文件">可执行文件</h3>
+<pre><code class="language-shell">$ CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc CXX=x86_64-w64-mingw32-g++ GOOS=windows GOARCH=amd64 go build -x -v -ldflags &quot;-s -w&quot; -o app.exe
+</code></pre>
+<h3 id="静态库">静态库</h3>
+<pre><code class="language-shell">$ CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc CXX=x86_64-w64-mingw32-g++ GOOS=windows GOARCH=amd64 go build -buildmode=c-archive -x -v -ldflags &quot;-s -w&quot; -o bin app.go
+</code></pre>
+<h3 id="动态库">动态库</h3>
+<p>将<code>-buildmode=c-archive</code>改为<code>-buildmode=c-shared</code>即可</p>
+<p><em><strong>转载资料 出处:<a href="https://www.dllhook.com/post/244.html">https://www.dllhook.com/post/244.html</a></strong></em></p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Kubernetes暴露信息给Pod]]></title>
         <id>https://stardemo.github.io/post/kubernetes-bao-lu-xin-xi-gei-pod/</id>
@@ -113,6 +174,9 @@ EOF
 <p>https://www.linuxprobe.com/enable-memberof-openldap.html<br>
 https://kifarunix.com/how-to-create-openldap-member-groups/</p>
 <h2 id="配置缓存">配置缓存</h2>
+<h3 id="查询缓存配置">查询缓存配置</h3>
+<pre><code class="language-shell">ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// -b cn=config 'olcDatabase={0}mdb' olcDbindex
+</code></pre>
 <h3 id="删除旧配置">删除旧配置</h3>
 <pre><code class="language-shell">cat &gt;&gt; del-1mdb-index.ldif &lt;&lt; EOF
 dn: olcDatabase={1}mdb, cn=config
@@ -552,53 +616,6 @@ i := &amp;v
 <p>未来，它一定会成为你离不开的伙伴</p>
 <p>尽情发挥你的才华吧！</p>
 <p>😘 Enjoy~</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Linux 常用命令dig]]></title>
-        <id>https://stardemo.github.io/post/linux-chang-yong-ming-ling-dig/</id>
-        <link href="https://stardemo.github.io/post/linux-chang-yong-ming-ling-dig/">
-        </link>
-        <updated>2020-04-16T02:48:37.000Z</updated>
-        <content type="html"><![CDATA[<h1 id="一-安装">一. 安装</h1>
-<ul>
-<li>1.Ubuntu/Debian安装</li>
-</ul>
-<pre><code class="language-shell">sudo apt-get install dnsutils
-</code></pre>
-<ul>
-<li>2.CentOs/RedHat安装</li>
-</ul>
-<pre><code>yum install bind-utils -y
-</code></pre>
-<h1 id="二-使用">二. 使用</h1>
-<ul>
-<li>1.简单查询</li>
-</ul>
-<pre><code class="language-shell">dig DOMAIN　
-</code></pre>
-<ul>
-<li>2.按记录类型查询，默认为A记录</li>
-</ul>
-<pre><code class="language-shell">dig DOMAIN cname
-dig DOMAIN mx
-dig DOMAIN AAAA
-</code></pre>
-<ul>
-<li>3.指定DNS服务器</li>
-</ul>
-<pre><code class="language-shell">dig  DOMAIN MX  8.8.8.8
-</code></pre>
-<ul>
-<li>4.从根域逐步查询的过程：+trace</li>
-</ul>
-<pre><code class="language-shell">dig DOMAIN +trace
-</code></pre>
-<ul>
-<li>5.返回简洁的查询结果</li>
-</ul>
-<pre><code class="language-shell">dig DOMAIN +short
-</code></pre>
 ]]></content>
     </entry>
 </feed>
