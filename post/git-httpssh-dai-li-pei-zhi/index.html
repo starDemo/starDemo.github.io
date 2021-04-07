@@ -8,7 +8,7 @@
 <meta name="keywords" content="starliu,istarboy,个人博客,运维,技术备忘录,docker,kubernetes,iot">
 <meta name="description" content="一个技术爱好者的备忘录">
 <meta name="theme-color" content="#000">
-<title>Kubernets 1.12的安装 | Zone</title>
+<title>Git HTTP+SSH 代理配置 | Zone</title>
 <link rel="shortcut icon" href="/favicon.ico?v=1617811628754">
 <link rel="stylesheet" href="/styles/main.css">
 <link rel="stylesheet" href="/media/css/gemini.css">
@@ -29,8 +29,8 @@
 
 
 
-  <meta name="description" content="Kubernets 1.12的安装" />
-  <meta name="keywords" content="运维" />
+  <meta name="description" content="Git HTTP+SSH 代理配置" />
+  <meta name="keywords" content="" />
 </head>
 
 <body>
@@ -264,22 +264,18 @@
   <div class="toc-wrapper auto-number auto"
     id="toc_wrapper">
     <ul class="markdownIt-TOC">
-<li><a href="#%E5%AE%89%E8%A3%85">安装</a><br>
-*
+<li>
 <ul>
-<li><a href="#%E7%B3%BB%E7%BB%9F%E8%A6%81%E6%B1%82">系统要求</a></li>
-<li><a href="#%E5%AE%89%E8%A3%85docker">安装Docker</a></li>
-<li><a href="#%E5%AE%89%E8%A3%85%E6%8C%87%E5%AE%9A%E7%89%88%E6%9C%AC">安装指定版本</a>
+<li><a href="#http-%E4%BB%A3%E7%90%86">HTTP 代理</a>
 <ul>
-<li><a href="#%E6%9F%A5%E7%9C%8Bdocker%E7%89%88%E6%9C%AC">查看Docker版本：</a></li>
-<li><a href="#%E9%85%8D%E7%BD%AEdocker%E5%8A%A0%E9%80%9F%E9%95%9C%E5%83%8F%E6%BA%90-%E6%AD%A4%E5%A4%84%E4%B8%BA%E4%B8%83%E7%89%9B">配置docker加速镜像源 （此处为七牛）</a></li>
-<li><a href="#%E5%AE%89%E8%A3%85kubelet-kubeadm-kubectl">安装kubelet kubeadm kubectl</a><br>
-*
-<ul>
-<li><a href="#k8s%E9%83%A8%E7%BD%B2%E8%BF%87%E7%A8%8B%E4%B8%AD%E7%9A%84%E4%B8%89%E5%A4%A7%E5%B7%A5%E5%85%B7">k8s部署过程中的三大工具</a></li>
+<li><a href="#%E9%85%8D%E7%BD%AE%E5%85%A8%E5%B1%80%E4%BB%A3%E7%90%86">配置全局代理</a></li>
+<li><a href="#%E5%88%86%E5%9F%9F%E5%90%8D%E8%AE%BE%E7%BD%AE%E4%BB%A3%E7%90%86">分域名设置代理</a></li>
 </ul>
 </li>
-<li><a href="#%E9%83%A8%E7%BD%B2k8s%E9%9B%86%E7%BE%A4">部署k8s集群</a></li>
+<li><a href="#ssh-%E4%BB%A3%E7%90%86">SSH 代理</a>
+<ul>
+<li><a href="#linuxmacos-%E7%B3%BB%E7%BB%9F%E5%86%99%E5%85%A5%E4%BB%A5%E4%B8%8B%E9%85%8D%E7%BD%AE">Linux/MacOS 系统写入以下配置：</a></li>
+<li><a href="#windows%E7%B3%BB%E7%BB%9F%E9%85%8D%E7%BD%AE">Windows系统配置</a></li>
 </ul>
 </li>
 </ul>
@@ -549,8 +545,8 @@
           <div class="section bg-color post post-page">
             <header class="post-header">
   <h1 class="post-title">
-    <a class="post-title-link" href="https://stardemo.github.io/post/kubernets-112-install/">
-      Kubernets 1.12的安装
+    <a class="post-title-link" href="https://stardemo.github.io/post/git-httpssh-dai-li-pei-zhi/">
+      Git HTTP+SSH 代理配置
     </a>
   </h1>
   <div class="post-meta">
@@ -558,36 +554,23 @@
     <span class="meta-item pc-show">
       <i class="fa fa-calendar-o"></i>
       <span>发布于</span>
-      <span>2018-10-20</span>
+      <span>2021-04-07</span>
       <span class="post-meta-divider pc-show">|</span>
     </span>
     
     <span class="meta-item">
-      <i class="fa fa-folder-o"></i>
-      <span class="pc-show">分类于</span>
-      
-      
-      <a href="https://stardemo.github.io/tag/UeMKnE0pQ/">
-        <span>运维</span>
-      </a>
-      
-      
-    </span>
-    <span class="post-meta-divider">|</span>
-    
-    <span class="meta-item">
       <i class="fa fa-clock-o"></i>
-      <span>6分钟</span>
+      <span>2分钟</span>
     </span>
     <span class="meta-item">
       <span class="post-meta-divider">|</span>
       <i class="fa fa-file-word-o"></i>
-      <span>1045<span class="pc-show">字数</span></span>
+      <span>322<span class="pc-show">字数</span></span>
     </span>
     
     
     
-    <span id="/post/kubernets-112-install/" data-flag-title="Kubernets 1.12的安装" class="meta-item pc-show leancloud_visitors">
+    <span id="/post/git-httpssh-dai-li-pei-zhi/" data-flag-title="Git HTTP+SSH 代理配置" class="meta-item pc-show leancloud_visitors">
       <span class="post-meta-divider">|</span>
       <i class="fa fa-eye"></i>
       <span>浏览量：<span class="leancloud-visitors-count"></span></span>
@@ -596,143 +579,45 @@
   </div>
 </header>
             <div class="post-body next-md-body" id="post_body">
-              <h1 id="安装">安装</h1>
-<h3 id="系统要求">系统要求</h3>
-<ul>
-<li>selinux关闭</li>
-<li>关闭swap</li>
-<li>各主机，节点之间ip和主机名加入/etc/hosts解析</li>
-<li>停用Firewalld</li>
-</ul>
-<h3 id="安装docker">安装Docker</h3>
-<ul>
-<li>使用Docker官网自动化脚本通过阿里云镜像安装</li>
-</ul>
-<pre><code>curl -fsSL https://get.docker.com | bash -s docker --mirror Aliyun
-</code></pre>
-<ul>
-<li>手动部署 (Ubuntu)</li>
-</ul>
-<pre><code>sudo apt-get update
-sudo apt-get -y install apt-transport-https ca-certificates curl software-properties-common
-curl -fsSL http://mirrors.aliyun.com/docker-ce/linux/ubuntu/gpg | sudo apt-key add -
-sudo add-apt-repository &quot;deb [arch=amd64] http://mirrors.aliyun.com/docker-ce/linux/ubuntu $(lsb_release -cs) stable&quot;
-sudo apt-get -y update
-sudo apt-get -y install docker-ce
-# 安装指定版本的Docker-CE:
-# Step 1: 查找Docker-CE的版本:
-# apt-cache madison docker-ce
-#   docker-ce | 17.03.1~ce-0~ubuntu-xenial | http://mirrors.aliyun.com/docker-ce/linux/ubuntu xenial/stable amd64 Packages
-#   docker-ce | 17.03.0~ce-0~ubuntu-xenial | http://mirrors.aliyun.com/docker-ce/linux/ubuntu xenial/stable amd64 Packages
-# Step 2: 安装指定版本的Docker-CE: (VERSION 例如上面的 17.03.1~ce-0~ubuntu-xenial)
-# sudo apt-get -y install docker-ce=[VERSION]
-</code></pre>
-<ul>
-<li>手动部署(Centos)</li>
-</ul>
-<pre><code># step 1: 安装必要的一些系统工具
-sudo yum install -y yum-utils device-mapper-persistent-data lvm2
-# Step 2: 添加软件源信息
-sudo yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
-# Step 3: 更新并安装 Docker-CE
-sudo yum makecache fast
-sudo yum -y install docker-ce
-# Step 4: 开启Docker服务
-sudo service docker start
+              <p>github访问日益困难,配置git服务代理以快速clone代码🐶</p>
+<!-- more -->
+<p><em><strong>技术方案转载于<a href="http://www.chenhe.cc/p/406">http://www.chenhe.cc/p/406</a></strong></em></p>
+<h2 id="http-代理">HTTP 代理</h2>
+<h3 id="配置全局代理">配置全局代理</h3>
+<pre><code class="language-shell"># HTTP 代理
+git config --global http.proxy http://127.0.0.1:7890
+git config --global https.proxy http://127.0.0.1:7890
 
-# 注意：
-# 官方软件源默认启用了最新的软件，您可以通过编辑软件源的方式获取各个版本的软件包。例如官方并没有将测试版本的软件源置为可用，你可以通过以下方式开启。同理可以开启各种测试版本等。
-# vim /etc/yum.repos.d/docker-ce.repo
-#   将 [docker-ce-test] 下方的 enabled=0 修改为 enabled=1
-#
-# 安装指定版本的Docker-CE:
-# Step 1: 查找Docker-CE的版本:
-# yum list docker-ce.x86_64 --showduplicates | sort -r
-#   Loading mirror speeds from cached hostfile
-#   Loaded plugins: branch, fastestmirror, langpacks
-#   docker-ce.x86_64            17.03.1.ce-1.el7.centos            docker-ce-stable
-#   docker-ce.x86_64            17.03.1.ce-1.el7.centos            @docker-ce-stable
-#   docker-ce.x86_64            17.03.0.ce-1.el7.centos            docker-ce-stable
-#   Available Packages
-# Step2 : 安装指定版本的Docker-CE: (VERSION 例如上面的 17.03.0.ce.1-1.el7.centos)
-# sudo yum -y install docker-ce-[VERSION]
+# Socks5 代理
+git config --global http.proxy socks5://127.0.0.1:7890
+git config --global https.proxy socks5://127.0.0.1:7890
 </code></pre>
-<h2 id="安装指定版本">安装指定版本</h2>
-<h3 id="查看docker版本">查看Docker版本：</h3>
-<p><code>yum list docker-ce --showduplicates</code><br>
-安装较旧版本（比如Docker 17.03.2) 时需要指定完整的rpm包的包名，并且加上--setopt=obsoletes=0 参数：</p>
-<pre><code># Install docker
-# on a new system with yum repo defined, forcing older version and ignoring obsoletes introduced by 17.06.0
+<p>注意这里的<code>socks5</code>仅仅是代理使用的协议，它依然是针对 http 设置的，所以仅对 http 协议的仓库有效。使用 <code>git@xxx</code>这种 ssh 连接的不会使用代理。</p>
+<h3 id="分域名设置代理">分域名设置代理</h3>
+<pre><code class="language-shell">git config --global http.https://github.com.proxy http://127.0.0.1:7890
+git config --global https.https://github.com.proxy https://127.0.0.1:7890
 </code></pre>
-<pre><code>yum install -y --setopt=obsoletes=0 \
-   docker-ce-17.03.2.ce-1.el7.centos.x86_64 \
-   docker-ce-selinux-17.03.2.ce-1.el7.centos.noarch
+<h2 id="ssh-代理">SSH 代理</h2>
+<p>SSH 代理需要在密钥目录 (<code>~/.ssh</code>) (Windows 下是 <code>C:\Users\{UserName}\.ssh</code>) 新建一个 config 文件，没有后缀名。</p>
+<h3 id="linuxmacos-系统写入以下配置">Linux/MacOS 系统写入以下配置：</h3>
+<pre><code class="language-shell"># 需要 netcat
+Host github.com
+  User git
+  Port 22
+  Hostname github.com
+  TCPKeepAlive yes
+  ProxyCommand nc -v -x 127.0.0.1:1080 %h %p
 </code></pre>
-<p>或安装Docker较新版本（比如Docker 18.03.0)时加上rpm包名的版本号部分：</p>
-<pre><code>sudo yum install docker-ce-18.03.0.ce
+<h3 id="windows系统配置">Windows系统配置</h3>
+<p>需要额外安装<code>connect.exe</code>程序,如果找不到 connect 命令那么指定其绝对路径，一般在 git 安装目录下 \mingw64\bin\connect.exe。</p>
+<pre><code class="language-shell">Host github.com
+  User git
+  Port 22
+  Hostname github.com
+  TCPKeepAlive yes
+  # -S 为 socks, -H 为 HTTP
+  ProxyCommand connect -S 127.0.0.1:1080 %h %p
 </code></pre>
-<p>或安装Docker最新版本，无需加版本号：</p>
-<pre><code>sudo yum install docker-ce
-</code></pre>
-<h3 id="配置docker加速镜像源-此处为七牛">配置docker加速镜像源 （此处为七牛）</h3>
-<pre><code class="language-bash">cat &lt;&lt;EOF&gt; /etc/docker/daemon.json
-{
-    &quot;registry-mirrors&quot;:[&quot;https://reg-mirror.qiniu.com&quot;,&quot;https://gcr-mirror.qiniu.com&quot;,&quot;https://quay-mirror.qiniu.com&quot;]
-}
-EOF
-systemctl restart docker
-</code></pre>
-<p>阿里云</p>
-<pre><code class="language-bash">sudo mkdir -p /etc/docker
-sudo tee /etc/docker/daemon.json &lt;&lt;-'EOF'
-{
-  &quot;registry-mirrors&quot;: [&quot;https://3me95jt4.mirror.aliyuncs.com&quot;]
-}
-EOF
-sudo systemctl daemon-reload
-sudo systemctl restart docker
-</code></pre>
-<h3 id="安装kubelet-kubeadm-kubectl">安装kubelet kubeadm kubectl</h3>
-<h5 id="k8s部署过程中的三大工具">k8s部署过程中的三大工具</h5>
-<p>kubelet： k8s的服务程序</p>
-<p>kubeadm:  k8s集群创建以及部署工具</p>
-<p>kubectl:  k8s集群的控制交互程序</p>
-<ul>
-<li>Debian/Ubuntu</li>
-</ul>
-<pre><code>apt-get update &amp;&amp; apt-get install -y apt-transport-https
-curl https://mirrors.aliyun.com/kubernetes/apt/doc/apt-key.gpg | apt-key add - 
-cat &lt;&lt;EOF &gt;/etc/apt/sources.list.d/kubernetes.list
-deb https://mirrors.aliyun.com/kubernetes/apt/ kubernetes-xenial main
-EOF  
-apt-get update
-apt-get install -y kubelet kubeadm kubectl
-</code></pre>
-<ul>
-<li>Centos/RHEL/Fedora</li>
-</ul>
-<pre><code>cat &lt;&lt;EOF &gt; /etc/yum.repos.d/kubernetes.repo
-[kubernetes]
-name=Kubernetes
-baseurl=https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64/
-enabled=1
-gpgcheck=1
-repo_gpgcheck=1
-gpgkey=https://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg https://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg
-EOF
-setenforce 0
-yum install -y kubelet kubeadm kubectl
-systemctl enable kubelet &amp;&amp; systemctl start kubelet
-</code></pre>
-<h3 id="部署k8s集群">部署k8s集群</h3>
-<pre><code>kubeadm init --kubernetes-version=v1.12.1 --pod-network-cidr=10.244.0.0/16
-mkdir -p $HOME/.kube
-sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
-sudo chown $(id -u):$(id -g) $HOME/.kube/config
-kubectl apply -f https://docs.projectcalico.org/v3.0/getting-started/kubernetes/installation/hosted/kubeadm/1.7/calico.yaml
-</code></pre>
-<p>注意网络插件的使用，整理这篇文章</p>
-<p>http://www.cnblogs.com/RainingNight/p/using-kubeadm-to-create-a-cluster-1-12.html</p>
 
             </div>
             <div class="post-footer">
@@ -743,7 +628,7 @@ kubectl apply -f https://docs.projectcalico.org/v3.0/getting-started/kubernetes/
     </li>
     <li class="post-copyright-link">
       <strong>本文链接：</strong>
-      <a href="https://stardemo.github.io/post/kubernets-112-install/" title="Kubernets 1.12的安装">https://stardemo.github.io/post/kubernets-112-install/</a>
+      <a href="https://stardemo.github.io/post/git-httpssh-dai-li-pei-zhi/" title="Git HTTP+SSH 代理配置">https://stardemo.github.io/post/git-httpssh-dai-li-pei-zhi/</a>
     </li>
     <li class="post-copyright-license">
       <strong>版权声明： </strong>
@@ -752,21 +637,15 @@ kubectl apply -f https://docs.projectcalico.org/v3.0/getting-started/kubernetes/
   </ul>
   <div class="tags">
     
-      <a href="https://stardemo.github.io/tag/UeMKnE0pQ/"># 运维</a>
-    
   </div>
   <div class="nav">
     <div class="nav-prev">
       
-        <i class="fa fa-chevron-left"></i>
-        <a class="nav-pc-next" title="博客正式搬家了～" href="https://stardemo.github.io/post/bo-ke-zheng-shi-ban-jia-liao-~/">博客正式搬家了～</a class="nav-pc-next">
-        <a class="nav-mobile-prev" title="博客正式搬家了～" href="https://stardemo.github.io/post/bo-ke-zheng-shi-ban-jia-liao-~/">上一篇</a>
-      
     </div>
     <div class="nav-next">
       
-        <a class="nav-pc-next" title="Mysql（mariadb）集群测试" href="https://stardemo.github.io/post/mysqlmariadbji-qun-ce-shi/">Mysql（mariadb）集群测试</a>
-        <a class="nav-mobile-next" title="Mysql（mariadb）集群测试" href="https://stardemo.github.io/post/mysqlmariadbji-qun-ce-shi/">下一篇</a>
+        <a class="nav-pc-next" title="Linux下使用curl查看http请求各阶段耗时" href="https://stardemo.github.io/post/linux-xia-shi-yong-curl-cha-kan-http-qing-qiu-ge-jie-duan-hao-shi/">Linux下使用curl查看http请求各阶段耗时</a>
+        <a class="nav-mobile-next" title="Linux下使用curl查看http请求各阶段耗时" href="https://stardemo.github.io/post/linux-xia-shi-yong-curl-cha-kan-http-qing-qiu-ge-jie-duan-hao-shi/">下一篇</a>
         <i class="fa fa-chevron-right"></i>
       
     </div>

@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://stardemo.github.io</id>
     <title>Zone</title>
-    <updated>2021-04-07T15:56:09.929Z</updated>
+    <updated>2021-04-07T16:07:26.107Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://stardemo.github.io"/>
     <link rel="self" href="https://stardemo.github.io/atom.xml"/>
@@ -10,6 +10,55 @@
     <logo>https://stardemo.github.io/images/avatar.png</logo>
     <icon>https://stardemo.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, Zone</rights>
+    <entry>
+        <title type="html"><![CDATA[Git HTTP+SSH 代理配置]]></title>
+        <id>https://stardemo.github.io/post/git-httpssh-dai-li-pei-zhi/</id>
+        <link href="https://stardemo.github.io/post/git-httpssh-dai-li-pei-zhi/">
+        </link>
+        <updated>2021-04-07T15:57:20.000Z</updated>
+        <summary type="html"><![CDATA[<p>github访问日益困难,配置git服务代理以快速clone代码🐶</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>github访问日益困难,配置git服务代理以快速clone代码🐶</p>
+<!-- more -->
+<p><em><strong>技术方案转载于<a href="http://www.chenhe.cc/p/406">http://www.chenhe.cc/p/406</a></strong></em></p>
+<h2 id="http-代理">HTTP 代理</h2>
+<h3 id="配置全局代理">配置全局代理</h3>
+<pre><code class="language-shell"># HTTP 代理
+git config --global http.proxy http://127.0.0.1:7890
+git config --global https.proxy http://127.0.0.1:7890
+
+# Socks5 代理
+git config --global http.proxy socks5://127.0.0.1:7890
+git config --global https.proxy socks5://127.0.0.1:7890
+</code></pre>
+<p>注意这里的<code>socks5</code>仅仅是代理使用的协议，它依然是针对 http 设置的，所以仅对 http 协议的仓库有效。使用 <code>git@xxx</code>这种 ssh 连接的不会使用代理。</p>
+<h3 id="分域名设置代理">分域名设置代理</h3>
+<pre><code class="language-shell">git config --global http.https://github.com.proxy http://127.0.0.1:7890
+git config --global https.https://github.com.proxy https://127.0.0.1:7890
+</code></pre>
+<h2 id="ssh-代理">SSH 代理</h2>
+<p>SSH 代理需要在密钥目录 (<code>~/.ssh</code>) (Windows 下是 <code>C:\Users\{UserName}\.ssh</code>) 新建一个 config 文件，没有后缀名。</p>
+<h3 id="linuxmacos-系统写入以下配置">Linux/MacOS 系统写入以下配置：</h3>
+<pre><code class="language-shell"># 需要 netcat
+Host github.com
+  User git
+  Port 22
+  Hostname github.com
+  TCPKeepAlive yes
+  ProxyCommand nc -v -x 127.0.0.1:1080 %h %p
+</code></pre>
+<h3 id="windows系统配置">Windows系统配置</h3>
+<p>需要额外安装<code>connect.exe</code>程序,如果找不到 connect 命令那么指定其绝对路径，一般在 git 安装目录下 \mingw64\bin\connect.exe。</p>
+<pre><code class="language-shell">Host github.com
+  User git
+  Port 22
+  Hostname github.com
+  TCPKeepAlive yes
+  # -S 为 socks, -H 为 HTTP
+  ProxyCommand connect -S 127.0.0.1:1080 %h %p
+</code></pre>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Linux下使用curl查看http请求各阶段耗时]]></title>
         <id>https://stardemo.github.io/post/linux-xia-shi-yong-curl-cha-kan-http-qing-qiu-ge-jie-duan-hao-shi/</id>
@@ -618,35 +667,6 @@ i := &amp;v
 <p>————————————————<br>
 版权声明：本文为CSDN博主「浅汐王」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
 原文链接：https://blog.csdn.net/qq_32252917/java/article/details/102953438</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Kubernetes日志采集Sidecar模式介绍]]></title>
-        <id>https://stardemo.github.io/post/kubernetes-ri-zhi-cai-ji-sidecar-mo-shi-jie-shao/</id>
-        <link href="https://stardemo.github.io/post/kubernetes-ri-zhi-cai-ji-sidecar-mo-shi-jie-shao/">
-        </link>
-        <updated>2020-05-11T07:05:52.000Z</updated>
-        <content type="html"><![CDATA[<h2 id="日志采集方式">日志采集方式</h2>
-<p>日志作为任一系统不可或缺的部分，在K8S的官方文档中也介绍了多种的日志采集形式，总结起来主要有下述3种：原生方式、DaemonSet方式和Sidecar方式。</p>
-<ol>
-<li>原生方式：使用 kubectl logs 直接在查看本地保留的日志，或者通过docker engine的 log driver 把日志重定向到文件、syslog、fluentd等系统中。</li>
-<li>DaemonSet方式：在K8S的每个node上部署日志agent，由agent采集所有容器的日志到服务端。</li>
-<li>Sidecar方式：一个POD中运行一个sidecar的日志agent容器，用于采集该POD主容器产生的日志。</li>
-</ol>
-<figure data-type="image" tabindex="1"><img src="https://stardemo.github.io/post-images/1589181137428.png" alt="" loading="lazy"></figure>
-<h2 id="采集方式对比">采集方式对比</h2>
-<p>每种采集方式都有一定的优劣势，这里我们进行简单的对比：</p>
-<figure data-type="image" tabindex="2"><img src="https://stardemo.github.io/post-images/1589180900695.png" alt="" loading="lazy"></figure>
-<p>从上述表格中可以看出：</p>
-<ol>
-<li>原生方式相对功能太弱，一般不建议在生产系统中使用，否则问题调查、数据统计等工作很难完成；</li>
-<li>DaemonSet方式在每个节点只允许一个日志agent，相对资源占用要小很多，但扩展性、租户隔离性受限，比较适用于功能单一或业务不是很多的集群；</li>
-<li>Sidecar方式为每个POD单独部署日志agent，相对资源占用较多，但灵活性以及多租户隔离性较强，建议大型的K8S集群或作为PAAS平台为多个业务方服务的集群使用该方式。</li>
-</ol>
-<pre><code>作者：阿里云云栖号
-链接：https://www.jianshu.com/p/72f34de4dd35
-来源：简书
-</code></pre>
 ]]></content>
     </entry>
 </feed>
