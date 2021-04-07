@@ -8,7 +8,7 @@
 <meta name="keywords" content="starliu,istarboy,个人博客,运维,技术备忘录,docker,kubernetes,iot">
 <meta name="description" content="一个技术爱好者的备忘录">
 <meta name="theme-color" content="#000">
-<title>开发者基本素养√ | Zone</title>
+<title>Linux下使用curl查看http请求各阶段耗时 | Zone</title>
 <link rel="shortcut icon" href="/favicon.ico?v=1617810913614">
 <link rel="stylesheet" href="/styles/main.css">
 <link rel="stylesheet" href="/media/css/gemini.css">
@@ -29,7 +29,7 @@
 
 
 
-  <meta name="description" content="开发者基本素养√" />
+  <meta name="description" content="Linux下使用curl查看http请求各阶段耗时" />
   <meta name="keywords" content="" />
 </head>
 
@@ -187,7 +187,8 @@
       <div class="sidebar-body gemini" id="sidebar_body">
         
           
-            
+            <div class="post-side-meta" id="post_side_meta">
+              
 <div class="sidebar-wrapper box-shadow-wrapper bg-color">
   <div class="sidebar-item">
     <img class="site-author-image right-motion" src="/images/avatar.png"/>
@@ -257,6 +258,197 @@
 
 
 </div>
+            </div>
+            <div class="post-toc sidebar-body-active" id="post_toc" style="opacity: 1;">
+              <div class="toc-box right-motion">
+  <div class="toc-wrapper auto-number auto"
+    id="toc_wrapper">
+    <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#1-%E5%87%86%E5%A4%87%E6%96%87%E4%BB%B6%E6%A8%A1%E7%89%88curltxt">1. 准备文件模版（curl.txt）</a></li>
+<li><a href="#2-%E4%BD%BF%E7%94%A8curl%E5%B8%A6%E4%BB%A5%E4%B8%8B%E5%8F%82%E6%95%B0%E8%AF%B7%E6%B1%82">2. 使用curl带以下参数请求</a></li>
+<li><a href="#3-%E5%8F%82%E6%95%B0%E8%AF%B4%E6%98%8E">3. 参数说明</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+</div>
+
+<script>
+
+  let lastTop = 0, lList = [], hList = [], postBody, lastIndex = -1;
+  let active = 'active-show', activeClass = 'active-current';
+  let tocWrapper = document.querySelector('#toc_wrapper');
+  let tocContent = tocWrapper.children[0];
+  let autoNumber = tocWrapper && tocWrapper.classList.contains('auto-number');
+
+  function addTocNumber(elem, deep) {
+    if (!elem) {
+      return;
+    }
+    let prop = elem.__proto__;
+
+    if (prop === HTMLUListElement.prototype) {
+      for (let i = 0; i < elem.children.length; i++) {
+        addTocNumber(elem.children[i], deep + (i + 1) + '.');
+      }
+    } else if (prop === HTMLLIElement.prototype) {
+      // 保存li元素
+      if (elem.children[0].__proto__ === HTMLAnchorElement.prototype) {
+        lList.push(elem);
+      }
+      for (let i = 0; i < elem.children.length; i++) {
+        let cur = elem.children[i];
+        if (cur.__proto__ === HTMLAnchorElement.prototype) {
+          if (autoNumber) {
+            cur.text = deep + ' ' + cur.text;
+          }
+        } else if (cur.__proto__ === HTMLUListElement.prototype) {
+          addTocNumber(cur, deep);
+        }
+      }
+    }
+  }
+
+  function removeParentActiveClass() {
+    let parents = tocContent.querySelectorAll('.' + active)
+    parents.forEach(function (elem) {
+      elem.classList.remove(active);
+    });
+  }
+
+  function addActiveClass(index) {
+    if (index >= 0 && index < hList.length) {
+      lList[index].classList.add(activeClass);
+    }
+  }
+
+  function removeActiveClass(index) {
+    if (index >= 0 && index < hList.length) {
+      lList[index].classList.remove(activeClass);
+    }
+  }
+
+  function addActiveLiElemment(elem, parent) {
+    if (!elem || elem === parent) {
+      return;
+    } else {
+      if (elem.__proto__ === HTMLLIElement.prototype) {
+        elem.classList.add(active);
+      }
+      addActiveLiElemment(elem.parentElement, parent);
+    }
+  }
+
+  function showToc() {
+    if (tocWrapper) {
+      postBody = document.querySelector('#post_body');
+      for (let i = 0; i < postBody.children.length; i++) {
+        if (postBody.children[i].__proto__ === HTMLHeadingElement.prototype) {
+          hList.push(postBody.children[i]);
+        }
+      }
+      if (tocWrapper.classList.contains('compress')) {
+        tocContent.classList.add('closed');
+      } else if (tocWrapper.classList.contains('no_compress')) {
+        tocContent.classList.add('expanded');
+      } else {
+        if (hList.length > 10) {
+          active = 'active-hidden'
+          tocContent.classList.add('closed');
+        } else {
+          tocContent.classList.add('expanded');
+        }
+      }
+    }
+  }
+
+  (function () {
+    // 处理不是从#一级标题开始目录
+    if (tocContent.children.length === 1 && tocContent.children[0].__proto__ === HTMLLIElement.prototype) {
+      let con = tocContent.children[0].children[0];
+      tocContent.innerHTML = con.innerHTML;
+    }
+    let markdownItTOC = document.querySelector('.markdownIt-TOC');
+    let innerHeight = window.innerHeight;
+    markdownItTOC.style = `max-height: ${innerHeight - 80 > 0 ? innerHeight - 80 : innerHeight}px`
+    addTocNumber(tocContent, '');
+  })();
+
+  document.addEventListener('scroll', function (e) {
+    if (lList.length <= 0) {
+      return;
+    }
+    let scrollTop = document.scrollingElement.scrollTop + 10;
+    let dir;
+
+    if (lastTop - scrollTop > 0) {
+      dir = 'up';
+    } else {
+      dir = 'down';
+    }
+
+    lastTop = scrollTop;
+    if (scrollTop <= 0) {
+      if (lastIndex >= 0 && lastIndex < hList.length) {
+        lList[lastIndex].classList.remove(activeClass);
+      }
+      return;
+    }
+
+    let current = 0, hasFind = false;
+    for (let i = 0; i < hList.length; i++) {
+      if (hList[i].offsetTop > scrollTop) {
+        current = i;
+        hasFind = true;
+        break;
+      }
+    }
+    if (!hasFind && scrollTop > lList[lList.length - 1].offsetTop) {
+      current = hList.length - 1;
+    } else {
+      current--;
+    }
+    if (dir === 'down') {
+      if (current > lastIndex) {
+        addActiveClass(current);
+        removeActiveClass(lastIndex)
+        lastIndex = current;
+        removeParentActiveClass();
+        lList[current] && addActiveLiElemment(lList[current].parentElement, tocContent);
+      }
+    } else {
+      if (current < lastIndex) {
+        addActiveClass(current);
+        removeActiveClass(lastIndex);
+        lastIndex = current;
+        removeParentActiveClass();
+        lList[current] && addActiveLiElemment(lList[current].parentElement, tocContent);
+      }
+    }
+  });
+
+
+  window.addEventListener('load', function () {
+    showToc();
+    document.querySelector('#sidebar').style = 'display: block;';
+    tocWrapper.classList.add('toc-active');
+    setTimeout(function () {
+      if ("createEvent" in document) {
+        let evt = document.createEvent("HTMLEvents");
+        evt.initEvent("scroll", false, true);
+        document.dispatchEvent(evt);
+      }
+      else {
+        document.fireEvent("scroll");
+      }
+    }, 500)
+  })
+
+</script>
+            </div>
           
         
       </div>
@@ -344,8 +536,8 @@
           <div class="section bg-color post post-page">
             <header class="post-header">
   <h1 class="post-title">
-    <a class="post-title-link" href="https://stardemo.github.io/post/kai-fa-zhe-ji-ben-su-yang/">
-      开发者基本素养√
+    <a class="post-title-link" href="https://stardemo.github.io/post/linux-xia-shi-yong-curl-cha-kan-http-qing-qiu-ge-jie-duan-hao-shi/">
+      Linux下使用curl查看http请求各阶段耗时
     </a>
   </h1>
   <div class="post-meta">
@@ -353,23 +545,23 @@
     <span class="meta-item pc-show">
       <i class="fa fa-calendar-o"></i>
       <span>发布于</span>
-      <span>2016-01-30</span>
+      <span>2021-04-07</span>
       <span class="post-meta-divider pc-show">|</span>
     </span>
     
     <span class="meta-item">
       <i class="fa fa-clock-o"></i>
-      <span>1分钟</span>
+      <span>2分钟</span>
     </span>
     <span class="meta-item">
       <span class="post-meta-divider">|</span>
       <i class="fa fa-file-word-o"></i>
-      <span>45<span class="pc-show">字数</span></span>
+      <span>381<span class="pc-show">字数</span></span>
     </span>
     
     
     
-    <span id="/post/kai-fa-zhe-ji-ben-su-yang/" data-flag-title="开发者基本素养√" class="meta-item pc-show leancloud_visitors">
+    <span id="/post/linux-xia-shi-yong-curl-cha-kan-http-qing-qiu-ge-jie-duan-hao-shi/" data-flag-title="Linux下使用curl查看http请求各阶段耗时" class="meta-item pc-show leancloud_visitors">
       <span class="post-meta-divider">|</span>
       <i class="fa fa-eye"></i>
       <span>浏览量：<span class="leancloud-visitors-count"></span></span>
@@ -378,14 +570,64 @@
   </div>
 </header>
             <div class="post-body next-md-body" id="post_body">
-              <p>开发者三条要诀</p>
-<!--more-->
-<p>使用开发者系统的时候时刻牢记：</p>
+              <p>HTTP接口在业务中速度较慢，使用curl进行排查</p>
+<!-- more -->
+<h2 id="1-准备文件模版curltxt">1. 准备文件模版（curl.txt）</h2>
+<pre><code class="language-shell">\n
+            time_namelookup:  %{time_namelookup}\n
+               time_connect:  %{time_connect}\n
+            time_appconnect:  %{time_appconnect}\n
+           time_pretransfer:  %{time_pretransfer}\n
+              time_redirect:  %{time_redirect}\n
+         time_starttransfer:  %{time_starttransfer}\n
+                            ----------\n
+                 time_total:  %{time_total}\n
+\n
+</code></pre>
+<h2 id="2-使用curl带以下参数请求">2. 使用curl带以下参数请求</h2>
+<pre><code class="language-shell">curl -w &quot;@curl.txt&quot; -o /dev/null -s https://api.example.com
+</code></pre>
+<p>结果</p>
+<pre><code>[@ ~]# curl -w &quot;@curl&quot; -o /dev/null -s https://api.example.com
+
+            time_namelookup:  0.004
+               time_connect:  0.014
+            time_appconnect:  0.141
+           time_pretransfer:  0.141
+              time_redirect:  0.000
+         time_starttransfer:  0.153
+                            ----------
+                 time_total:  0.165
+</code></pre>
+<h2 id="3-参数说明">3. 参数说明</h2>
 <ul>
-<li>a.命令行优于图形界面</li>
-<li>b.键盘优于鼠标</li>
-<li>c.搜索优于导航</li>
+<li>NAMELOOKUP：从开始计算，域名解析完成的耗时</li>
 </ul>
+<p>CURLINFO_NAMELOOKUP_TIME. The time it took from the start until the name resolving was completed.</p>
+<ul>
+<li>CONNECT：从开始计算，TCP建立完成的耗时</li>
+</ul>
+<p>CURLINFO_CONNECT_TIME. The time it took from the start until the connect to the remote host (or proxy) was completed.</p>
+<ul>
+<li>APPCONNECT：从开始计算，应用层（SSL，在TCP之上的应用层）连接/握手完成的耗时</li>
+</ul>
+<p>CURLINFO_APPCONNECT_TIME. The time it took from the start until the SSL connect/handshake with the remote host was completed. (Added in in 7.19.0)</p>
+<ul>
+<li>PRETRANSFER：从开始计算，准备开始传输数据的耗时</li>
+</ul>
+<p>CURLINFO_PRETRANSFER_TIME. The time it took from the start until the file transfer is just about to begin. This includes all pre-transfer commands and negotiations that are specific to the particular protocol(s) involved.</p>
+<ul>
+<li>STARTTRANSFER：从开始计算，开始传输数据的耗时（libcurl接收到第一个字节）</li>
+</ul>
+<p>CURLINFO_STARTTRANSFER_TIME. The time it took from the start until the first byte is received by libcurl.</p>
+<ul>
+<li>TOTAL：总的耗时</li>
+</ul>
+<p>CURLINFO_TOTAL_TIME. Total time of the previous request.</p>
+<ul>
+<li>REDIRECT：整个过程重定向的耗时，如果整个过程没有重定向，这个时间为0</li>
+</ul>
+<p><em><strong>文章来源于互联网,原地址<a href="https://www.cnblogs.com/lnlvinso/p/9775484.html">https://www.cnblogs.com/lnlvinso/p/9775484.html</a></strong></em></p>
 
             </div>
             <div class="post-footer">
@@ -396,7 +638,7 @@
     </li>
     <li class="post-copyright-link">
       <strong>本文链接：</strong>
-      <a href="https://stardemo.github.io/post/kai-fa-zhe-ji-ben-su-yang/" title="开发者基本素养√">https://stardemo.github.io/post/kai-fa-zhe-ji-ben-su-yang/</a>
+      <a href="https://stardemo.github.io/post/linux-xia-shi-yong-curl-cha-kan-http-qing-qiu-ge-jie-duan-hao-shi/" title="Linux下使用curl查看http请求各阶段耗时">https://stardemo.github.io/post/linux-xia-shi-yong-curl-cha-kan-http-qing-qiu-ge-jie-duan-hao-shi/</a>
     </li>
     <li class="post-copyright-license">
       <strong>版权声明： </strong>
@@ -409,15 +651,11 @@
   <div class="nav">
     <div class="nav-prev">
       
-        <i class="fa fa-chevron-left"></i>
-        <a class="nav-pc-next" title="关于屏幕那些事···" href="https://stardemo.github.io/post/guan-yu-ping-mu-na-xie-shi/">关于屏幕那些事···</a class="nav-pc-next">
-        <a class="nav-mobile-prev" title="关于屏幕那些事···" href="https://stardemo.github.io/post/guan-yu-ping-mu-na-xie-shi/">上一篇</a>
-      
     </div>
     <div class="nav-next">
       
-        <a class="nav-pc-next" title="Docker的常用命令" href="https://stardemo.github.io/post/docker-de-chang-yong-ming-ling/">Docker的常用命令</a>
-        <a class="nav-mobile-next" title="Docker的常用命令" href="https://stardemo.github.io/post/docker-de-chang-yong-ming-ling/">下一篇</a>
+        <a class="nav-pc-next" title="在macOS下启用CGO_ENABLED的交叉编译" href="https://stardemo.github.io/post/zai-macos-xia-qi-yong-cgo_enabled-de-jiao-cha-bian-yi/">在macOS下启用CGO_ENABLED的交叉编译</a>
+        <a class="nav-mobile-next" title="在macOS下启用CGO_ENABLED的交叉编译" href="https://stardemo.github.io/post/zai-macos-xia-qi-yong-cgo_enabled-de-jiao-cha-bian-yi/">下一篇</a>
         <i class="fa fa-chevron-right"></i>
       
     </div>

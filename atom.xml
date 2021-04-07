@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://stardemo.github.io</id>
     <title>Zone</title>
-    <updated>2021-04-07T15:50:19.646Z</updated>
+    <updated>2021-04-07T15:56:09.929Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://stardemo.github.io"/>
     <link rel="self" href="https://stardemo.github.io/atom.xml"/>
@@ -10,6 +10,74 @@
     <logo>https://stardemo.github.io/images/avatar.png</logo>
     <icon>https://stardemo.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, Zone</rights>
+    <entry>
+        <title type="html"><![CDATA[Linux下使用curl查看http请求各阶段耗时]]></title>
+        <id>https://stardemo.github.io/post/linux-xia-shi-yong-curl-cha-kan-http-qing-qiu-ge-jie-duan-hao-shi/</id>
+        <link href="https://stardemo.github.io/post/linux-xia-shi-yong-curl-cha-kan-http-qing-qiu-ge-jie-duan-hao-shi/">
+        </link>
+        <updated>2021-04-07T15:50:42.000Z</updated>
+        <summary type="html"><![CDATA[<p>HTTP接口在业务中速度较慢，使用curl进行排查</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>HTTP接口在业务中速度较慢，使用curl进行排查</p>
+<!-- more -->
+<h2 id="1-准备文件模版curltxt">1. 准备文件模版（curl.txt）</h2>
+<pre><code class="language-shell">\n
+            time_namelookup:  %{time_namelookup}\n
+               time_connect:  %{time_connect}\n
+            time_appconnect:  %{time_appconnect}\n
+           time_pretransfer:  %{time_pretransfer}\n
+              time_redirect:  %{time_redirect}\n
+         time_starttransfer:  %{time_starttransfer}\n
+                            ----------\n
+                 time_total:  %{time_total}\n
+\n
+</code></pre>
+<h2 id="2-使用curl带以下参数请求">2. 使用curl带以下参数请求</h2>
+<pre><code class="language-shell">curl -w &quot;@curl.txt&quot; -o /dev/null -s https://api.example.com
+</code></pre>
+<p>结果</p>
+<pre><code>[@ ~]# curl -w &quot;@curl&quot; -o /dev/null -s https://api.example.com
+
+            time_namelookup:  0.004
+               time_connect:  0.014
+            time_appconnect:  0.141
+           time_pretransfer:  0.141
+              time_redirect:  0.000
+         time_starttransfer:  0.153
+                            ----------
+                 time_total:  0.165
+</code></pre>
+<h2 id="3-参数说明">3. 参数说明</h2>
+<ul>
+<li>NAMELOOKUP：从开始计算，域名解析完成的耗时</li>
+</ul>
+<p>CURLINFO_NAMELOOKUP_TIME. The time it took from the start until the name resolving was completed.</p>
+<ul>
+<li>CONNECT：从开始计算，TCP建立完成的耗时</li>
+</ul>
+<p>CURLINFO_CONNECT_TIME. The time it took from the start until the connect to the remote host (or proxy) was completed.</p>
+<ul>
+<li>APPCONNECT：从开始计算，应用层（SSL，在TCP之上的应用层）连接/握手完成的耗时</li>
+</ul>
+<p>CURLINFO_APPCONNECT_TIME. The time it took from the start until the SSL connect/handshake with the remote host was completed. (Added in in 7.19.0)</p>
+<ul>
+<li>PRETRANSFER：从开始计算，准备开始传输数据的耗时</li>
+</ul>
+<p>CURLINFO_PRETRANSFER_TIME. The time it took from the start until the file transfer is just about to begin. This includes all pre-transfer commands and negotiations that are specific to the particular protocol(s) involved.</p>
+<ul>
+<li>STARTTRANSFER：从开始计算，开始传输数据的耗时（libcurl接收到第一个字节）</li>
+</ul>
+<p>CURLINFO_STARTTRANSFER_TIME. The time it took from the start until the first byte is received by libcurl.</p>
+<ul>
+<li>TOTAL：总的耗时</li>
+</ul>
+<p>CURLINFO_TOTAL_TIME. Total time of the previous request.</p>
+<ul>
+<li>REDIRECT：整个过程重定向的耗时，如果整个过程没有重定向，这个时间为0</li>
+</ul>
+<p><em><strong>文章来源于互联网,原地址<a href="https://www.cnblogs.com/lnlvinso/p/9775484.html">https://www.cnblogs.com/lnlvinso/p/9775484.html</a></strong></em></p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[在macOS下启用CGO_ENABLED的交叉编译]]></title>
         <id>https://stardemo.github.io/post/zai-macos-xia-qi-yong-cgo_enabled-de-jiao-cha-bian-yi/</id>
@@ -579,43 +647,6 @@ i := &amp;v
 链接：https://www.jianshu.com/p/72f34de4dd35
 来源：简书
 </code></pre>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Hello Gridea]]></title>
-        <id>https://stardemo.github.io/post/hello-gridea-blog/</id>
-        <link href="https://stardemo.github.io/post/hello-gridea-blog/">
-        </link>
-        <updated>2020-04-18T00:00:00.000Z</updated>
-        <summary type="html"><![CDATA[<p>👏  博客搬家啦  <strong>Github Pages</strong> ！<br>
-👏  文章逐渐迁移整理中🙏 ！<br>
-👏  欢迎使用 <strong>Gridea</strong> ！<br>
-...</p>
-]]></summary>
-        <content type="html"><![CDATA[<p>👏  博客搬家啦  <strong>Github Pages</strong> ！<br>
-👏  文章逐渐迁移整理中🙏 ！<br>
-👏  欢迎使用 <strong>Gridea</strong> ！<br>
-...</p>
-<!-- more -->
-<p>✍️  <strong>Gridea</strong> 一个静态博客写作客户端。你可以用它来记录你的生活、心情、知识、笔记、创意...<br>
-<a href="https://github.com/getgridea/gridea">Github</a><br>
-<a href="https://gridea.dev/">Gridea 主页</a><br>
-<a href="http://fehey.com/">示例网站</a></p>
-<h2 id="特性">特性👇</h2>
-<p>📝  你可以使用最酷的 <strong>Markdown</strong> 语法，进行快速创作</p>
-<p>🌉  你可以给文章配上精美的封面图和在文章任意位置插入图片</p>
-<p>🏷️  你可以对文章进行标签分组</p>
-<p>📋  你可以自定义菜单，甚至可以创建外部链接菜单</p>
-<p>💻  你可以在 <strong>Windows</strong>，<strong>MacOS</strong> 或 <strong>Linux</strong> 设备上使用此客户端</p>
-<p>🌎  你可以使用 <strong>𝖦𝗂𝗍𝗁𝗎𝖻 𝖯𝖺𝗀𝖾𝗌</strong> 或 <strong>Coding Pages</strong> 向世界展示，未来将支持更多平台</p>
-<p>💬  你可以进行简单的配置，接入 <a href="https://github.com/gitalk/gitalk">Gitalk</a> 或 <a href="https://github.com/SukkaW/DisqusJS">DisqusJS</a> 评论系统</p>
-<p>🇬🇧  你可以使用<strong>中文简体</strong>或<strong>英语</strong></p>
-<p>🌁  你可以任意使用应用内默认主题或任意第三方主题，强大的主题自定义能力</p>
-<p>🖥  你可以自定义源文件夹，利用 OneDrive、百度网盘、iCloud、Dropbox 等进行多设备同步</p>
-<p>🌱 当然 <strong>Gridea</strong> 还很年轻，有很多不足，但请相信，它会不停向前 🏃</p>
-<p>未来，它一定会成为你离不开的伙伴</p>
-<p>尽情发挥你的才华吧！</p>
-<p>😘 Enjoy~</p>
 ]]></content>
     </entry>
 </feed>
