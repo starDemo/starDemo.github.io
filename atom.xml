@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://stardemo.github.io</id>
     <title>Zone</title>
-    <updated>2021-04-07T16:07:26.107Z</updated>
+    <updated>2021-04-13T02:53:37.861Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://stardemo.github.io"/>
     <link rel="self" href="https://stardemo.github.io/atom.xml"/>
@@ -10,6 +10,90 @@
     <logo>https://stardemo.github.io/images/avatar.png</logo>
     <icon>https://stardemo.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, Zone</rights>
+    <entry>
+        <title type="html"><![CDATA[MacOS 下使用nvm管理node环境]]></title>
+        <id>https://stardemo.github.io/post/macos-xia-shi-yong-nvm-guan-li-node-huan-jing/</id>
+        <link href="https://stardemo.github.io/post/macos-xia-shi-yong-nvm-guan-li-node-huan-jing/">
+        </link>
+        <updated>2021-04-13T02:34:06.000Z</updated>
+        <summary type="html"><![CDATA[<p>node版本变化有些快，需要切换不同版本构建项目，使用nvm管理node是一个比较成熟的方案。</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>node版本变化有些快，需要切换不同版本构建项目，使用nvm管理node是一个比较成熟的方案。</p>
+<!-- more -->
+<h2 id="1-安装nvm">1. 安装nvm</h2>
+<h3 id="11-macos">1.1 MacOS</h3>
+<ul>
+<li>brew安装</li>
+</ul>
+<pre><code class="language-shell">brew install nvm 
+</code></pre>
+<ul>
+<li>官方脚本</li>
+</ul>
+<pre><code class="language-shell">curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh | bash
+</code></pre>
+<h3 id="12-linux">1.2 Linux</h3>
+<pre><code class="language-shell">curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh | bash
+</code></pre>
+<h3 id="13-安装注意事项">1.3 安装注意事项</h3>
+<pre><code>==&gt; Caveats
+Please note that upstream has asked us to make explicit managing
+nvm via Homebrew is unsupported by them and you should check any
+problems against the standard nvm install method prior to reporting.
+
+You should create NVM's working directory if it doesn't exist:
+
+  mkdir ~/.nvm
+
+Add the following to ~/.zshrc or your desired shell
+configuration file:
+
+  export NVM_DIR=&quot;$HOME/.nvm&quot;
+  [ -s &quot;/opt/homebrew/opt/nvm/nvm.sh&quot; ] &amp;&amp; . &quot;/opt/homebrew/opt/nvm/nvm.sh&quot;  # This loads nvm
+  [ -s &quot;/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm&quot; ] &amp;&amp; . &quot;/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm&quot;  # This loads nvm bash_completion
+
+You can set $NVM_DIR to any location, but leaving it unchanged from
+/opt/homebrew/opt/nvm will destroy any nvm-installed Node installations
+upon upgrade/reinstall.
+
+Type `nvm help` for further information.
+
+</code></pre>
+<ul>
+<li>创建nvm目录</li>
+</ul>
+<pre><code class="language-shell">mkdir ~/.nvm
+</code></pre>
+<ul>
+<li>处理<code>~/.zshrc</code>或者<code>~/.bashrc</code>（此处zsh举例）</li>
+</ul>
+<pre><code class="language-shell">  export NVM_DIR=&quot;$HOME/.nvm&quot;
+  [ -s &quot;/opt/homebrew/opt/nvm/nvm.sh&quot; ] &amp;&amp; . &quot;/opt/homebrew/opt/nvm/nvm.sh&quot;  # This loads nvm
+  [ -s &quot;/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm&quot; ] &amp;&amp; . &quot;/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm&quot;  # This loads nvm bash_completion
+</code></pre>
+<h2 id="2-配置镜像加速">2. 配置镜像加速</h2>
+<h3 id="21-nvm加速">2.1 nvm加速</h3>
+<p>需要设置环境变量<code>NVM_NODEJS_ORG_MIRROR</code></p>
+<pre><code class="language-shell"># 临时设置
+export NVM_NODEJS_ORG_MIRROR=http://npm.taobao.org/mirrors/node
+# 配置上述命令到bashrc/zshrc中保持生效
+</code></pre>
+<h3 id="22-npm加速">2.2 npm加速</h3>
+<pre><code class="language-shell"># 查看当前registry
+npm config -g get registry
+# 设置registry
+npm config -g set registry https://registry.npm.taobao.org
+</code></pre>
+<h3 id="23-yarn配置">2.3 yarn配置</h3>
+<pre><code class="language-shell"># 安装yarn
+npm install -g yarn
+# 查看yarn registry
+yarn config get registry
+# 设置yarn registry
+yarn config set registry http://registry.npm.taobao.org/
+</code></pre>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Git HTTP+SSH 代理配置]]></title>
         <id>https://stardemo.github.io/post/git-httpssh-dai-li-pei-zhi/</id>
@@ -565,108 +649,6 @@ let response = await axios.get(`${global.api}/dtea-service/user/result?examId=${
 链接：https://www.jianshu.com/p/16de172d0d45<br>
 来源：简书<br>
 著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[[Go]make和new关键字的区别及实现原理]]></title>
-        <id>https://stardemo.github.io/post/diff-make-and-new/</id>
-        <link href="https://stardemo.github.io/post/diff-make-and-new/">
-        </link>
-        <updated>2020-05-21T03:16:43.000Z</updated>
-        <summary type="html"><![CDATA[<p>Go 中经常初始化结构体，对于初始化方式的一些深入理解。</p>
-]]></summary>
-        <content type="html"><![CDATA[<p>Go 中经常初始化结构体，对于初始化方式的一些深入理解。</p>
-<!-- more -->
-<p>当我们想要在Go语言中初始化一个结构时，其实会使用到两个完全不同的关键字，也就是 make 和 new，同时出现两个用于初始化的关键字对于初学者来说可能会感到非常困惑，不过它们两者却有着完全不同的作用。</p>
-<p>在Go语言中，make 关键字的主要作用是初始化内置的数据结构，也就是我们在前面提到的数组、切片和 Channel，而当我们想要获取指向某个类型的指针时可以使用 new 关键字，只是知道如何使用 new 的人真的比较少，下面我们就来介绍一下 make 和 new 它们的区别以及实现原理。</p>
-<h1 id="概述">概述</h1>
-<p>虽然 make 和 new 都是能够用于初始化数据结构，但是它们两者能够初始化的结构类型却有着较大的不同，make 在Go语言中只能用于初始化语言中的基本类型：</p>
-<pre><code class="language-go">slice := make([]int, 0, 100)
-hash := make(map[int]bool, 10)
-ch := make(chan int, 5)
-</code></pre>
-<p>这些基本类型都是语言为我们提供的，我们在前面已经介绍过了它们初始化的过程以及原理，但是在这里还是需要提醒大家注意的是，这三者返回了不同类型的数据结构：</p>
-<ul>
-<li>slice 是一个包含 data、cap 和 len 的结构体；</li>
-<li>hash 是一个指向 hmap 结构体的指针；</li>
-<li>ch 是一个指向 hchan 结构体的指针。</li>
-</ul>
-<p>而另一个用于初始化数据结构的关键字 new 的作用其实就非常简单了，它只是接收一个类型作为参数然后返回一个指向这个类型的指针：</p>
-<pre><code class="language-go">i := new(int)
-var v int
-i := &amp;v
-</code></pre>
-<p>上述代码片段中的两种不同初始化方法其实是等价的，它们都会创建一个指向 int 零值的指针。<br>
-<img src="https://stardemo.github.io/post-images/1590031666594.jpeg" alt="" loading="lazy"><br>
-到了这里我们对Go语言中这两种不同关键字的使用也有了一定的了解：<code>make 用于创建切片、哈希表和管道等内置数据结构，new 用于分配并创建一个指向对应类型的指针</code>。</p>
-<h1 id="实现原理">实现原理</h1>
-<p>接下来我们将分别介绍 make 和 new 在初始化不同数据结构时的具体过程，我们会从编译期间和运行时两个不同的阶段理解这两个关键字的原理。</p>
-<h2 id="make">make</h2>
-<p>我们已经了解了 make 在创建数组和切片、哈希表和 Channel 的具体过程，所以在这里我们也只是会简单提及 make 相关的数据结构初始化原理。<br>
-<img src="https://stardemo.github.io/post-images/1590031718876.gif" alt="" loading="lazy"><br>
-在编译期间的类型检查阶段，Go语言其实就将代表 make 关键字的 OMAKE 节点根据参数类型的不同转换成了 OMAKESLICE、OMAKEMAP 和 OMAKECHAN 三种不同类型的节点，这些节点最终也会调用不同的运行时函数来初始化数据结构。</p>
-<h2 id="new">new</h2>
-<p>内置函数 new 会在编译期间的 SSA 代码生成阶段经过 callnew 函数的处理，如果请求创建的类型大小是 0，那么就会返回一个表示空指针的 zerobase 变量，在遇到其他情况时会将关键字转换成 newobject：</p>
-<pre><code class="language-go">func callnew(t *types.Type) *Node {
-    if t.NotInHeap() {
-        yyerror(&quot;%v is go:notinheap; heap allocation disallowed&quot;, t)
-    }
-    dowidth(t)
- 
-    if t.Size() == 0 {
-        z := newname(Runtimepkg.Lookup(&quot;zerobase&quot;))
-        z.SetClass(PEXTERN)
-        z.Type = t
-        return typecheck(nod(OADDR, z, nil), ctxExpr)
-    }
- 
-    fn := syslook(&quot;newobject&quot;)
-    fn = substArgTypes(fn, t)
-    v := mkcall1(fn, types.NewPtr(t), nil, typename(t))
-    v.SetNonNil(true)
-    return v
-}
-</code></pre>
-<p>需要提到的是，哪怕当前变量是使用 var 进行初始化，在这一阶段也可能会被转换成 newobject 的函数调用并在堆上申请内存：</p>
-<pre><code class="language-go">func walkstmt(n *Node) *Node {
-    switch n.Op {
-    case ODCL:
-        v := n.Left
-        if v.Class() == PAUTOHEAP {
-            if prealloc[v] == nil {
-                prealloc[v] = callnew(v.Type)
-            }
-            nn := nod(OAS, v.Name.Param.Heapaddr, prealloc[v])
-            nn.SetColas(true)
-            nn = typecheck(nn, ctxStmt)
-            return walkstmt(nn)
-        }
-    case ONEW:
-        if n.Esc == EscNone {
-            r := temp(n.Type.Elem())
-            r = nod(OAS, r, nil)
-            r = typecheck(r, ctxStmt)
-            init.Append(r)
-            r = nod(OADDR, r.Left, nil)
-            r = typecheck(r, ctxExpr)
-            n = r
-        } else {
-            n = callnew(n.Type.Elem())
-        }
-    }
-}
-</code></pre>
-<p>当然这也不是绝对的，如果当前声明的变量或者参数不需要在当前作用域外生存，那么其实就不会被初始化在堆上，而是会初始化在当前函数的栈中并随着函数调用的结束而被销毁。</p>
-<p>newobject 函数的工作就是获取传入类型的大小并调用 mallocgc 在堆上申请一片大小合适的内存空间并返回指向这片内存空间的指针：</p>
-<pre><code>func newobject(typ *_type) unsafe.Pointer {
-    return mallocgc(typ.size, typ, true)
-}
-</code></pre>
-<h1 id="总结">总结</h1>
-<p>最后，简单总结一下Go语言中 make 和 new 关键字的实现原理，make 关键字的主要作用是创建切片、哈希表和 Channel 等内置的数据结构，而 new 的主要作用是为类型申请一片内存空间，并返回指向这片内存的指针。</p>
-<p>————————————————<br>
-版权声明：本文为CSDN博主「浅汐王」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
-原文链接：https://blog.csdn.net/qq_32252917/java/article/details/102953438</p>
 ]]></content>
     </entry>
 </feed>
