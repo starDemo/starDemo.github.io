@@ -8,7 +8,7 @@
 <meta name="keywords" content="starliu,istarboy,个人博客,运维,技术备忘录,docker,kubernetes,iot">
 <meta name="description" content="一个技术爱好者的备忘录">
 <meta name="theme-color" content="#000">
-<title>[Go]make和new关键字的区别及实现原理 | Zone</title>
+<title>[面经] 常见面试问答整理 | Zone</title>
 <link rel="shortcut icon" href="/favicon.ico?v=1619446513499">
 <link rel="stylesheet" href="/styles/main.css">
 <link rel="stylesheet" href="/media/css/gemini.css">
@@ -29,8 +29,8 @@
 
 
 
-  <meta name="description" content="[Go]make和new关键字的区别及实现原理" />
-  <meta name="keywords" content="Golang" />
+  <meta name="description" content="[面经] 常见面试问答整理" />
+  <meta name="keywords" content="" />
 </head>
 
 <body>
@@ -264,14 +264,26 @@
   <div class="toc-wrapper auto-number auto"
     id="toc_wrapper">
     <ul class="markdownIt-TOC">
-<li><a href="#%E6%A6%82%E8%BF%B0">概述</a></li>
-<li><a href="#%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86">实现原理</a>
+<li>
 <ul>
-<li><a href="#make">make</a></li>
-<li><a href="#new">new</a></li>
+<li><a href="#1-%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80">1. 网络基础</a>
+<ul>
+<li><a href="#11-%E9%97%AE%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E5%92%8C%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B">1.1 问：三次握手和四次挥手</a>
+<ul>
+<li><a href="#%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B">三次握手</a></li>
+<li><a href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E6%98%AF%E4%B8%A4%E6%AC%A1">为什么不是两次？</a></li>
+<li><a href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E6%98%AF%E5%9B%9B%E6%AC%A1">为什么不是四次？</a></li>
+<li><a href="#%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B">四次挥手</a></li>
+<li><a href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E7%AD%89%E5%BE%85-2mslmaximum-segement-lifetime">为什么需要等待 2MSL（Maximum Segement Lifetime）：</a></li>
+<li><a href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E6%98%AF%E5%9B%9B%E6%AC%A1%E8%80%8C%E4%B8%8D%E6%98%AF%E4%B8%89%E6%AC%A1">为什么是四次而不是三次？</a></li>
+<li><a href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99">参考资料</a></li>
 </ul>
 </li>
-<li><a href="#%E6%80%BB%E7%BB%93">总结</a></li>
+</ul>
+</li>
+<li><a href="#n-%E8%BD%AC%E8%BD%BD%E6%BA%90">n. 转载源</a></li>
+</ul>
+</li>
 </ul>
 
   </div>
@@ -537,8 +549,8 @@
           <div class="section bg-color post post-page">
             <header class="post-header">
   <h1 class="post-title">
-    <a class="post-title-link" href="https://stardemo.github.io/post/diff-make-and-new/">
-      [Go]make和new关键字的区别及实现原理
+    <a class="post-title-link" href="https://stardemo.github.io/post/mian-jing-chang-jian-mian-shi-wen-da-zheng-li/">
+      [面经] 常见面试问答整理
     </a>
   </h1>
   <div class="post-meta">
@@ -546,36 +558,23 @@
     <span class="meta-item pc-show">
       <i class="fa fa-calendar-o"></i>
       <span>发布于</span>
-      <span>2020-05-21</span>
+      <span>2021-04-26</span>
       <span class="post-meta-divider pc-show">|</span>
     </span>
     
     <span class="meta-item">
-      <i class="fa fa-folder-o"></i>
-      <span class="pc-show">分类于</span>
-      
-      
-      <a href="https://stardemo.github.io/tag/Golang/">
-        <span>Golang</span>
-      </a>
-      
-      
-    </span>
-    <span class="post-meta-divider">|</span>
-    
-    <span class="meta-item">
       <i class="fa fa-clock-o"></i>
-      <span>6分钟</span>
+      <span>4分钟</span>
     </span>
     <span class="meta-item">
       <span class="post-meta-divider">|</span>
       <i class="fa fa-file-word-o"></i>
-      <span>1341<span class="pc-show">字数</span></span>
+      <span>853<span class="pc-show">字数</span></span>
     </span>
     
     
     
-    <span id="/post/diff-make-and-new/" data-flag-title="[Go]make和new关键字的区别及实现原理" class="meta-item pc-show leancloud_visitors">
+    <span id="/post/mian-jing-chang-jian-mian-shi-wen-da-zheng-li/" data-flag-title="[面经] 常见面试问答整理" class="meta-item pc-show leancloud_visitors">
       <span class="post-meta-divider">|</span>
       <i class="fa fa-eye"></i>
       <span>浏览量：<span class="leancloud-visitors-count"></span></span>
@@ -584,98 +583,53 @@
   </div>
 </header>
             <div class="post-body next-md-body" id="post_body">
-              <p>Go 中经常初始化结构体，对于初始化方式的一些深入理解。</p>
+              <p>收集各路面试问答，做一个记录</p>
 <!-- more -->
-<p>当我们想要在Go语言中初始化一个结构时，其实会使用到两个完全不同的关键字，也就是 make 和 new，同时出现两个用于初始化的关键字对于初学者来说可能会感到非常困惑，不过它们两者却有着完全不同的作用。</p>
-<p>在Go语言中，make 关键字的主要作用是初始化内置的数据结构，也就是我们在前面提到的数组、切片和 Channel，而当我们想要获取指向某个类型的指针时可以使用 new 关键字，只是知道如何使用 new 的人真的比较少，下面我们就来介绍一下 make 和 new 它们的区别以及实现原理。</p>
-<h1 id="概述">概述</h1>
-<p>虽然 make 和 new 都是能够用于初始化数据结构，但是它们两者能够初始化的结构类型却有着较大的不同，make 在Go语言中只能用于初始化语言中的基本类型：</p>
-<pre><code class="language-go">slice := make([]int, 0, 100)
-hash := make(map[int]bool, 10)
-ch := make(chan int, 5)
-</code></pre>
-<p>这些基本类型都是语言为我们提供的，我们在前面已经介绍过了它们初始化的过程以及原理，但是在这里还是需要提醒大家注意的是，这三者返回了不同类型的数据结构：</p>
+<h2 id="1-网络基础">1. 网络基础</h2>
+<h3 id="11-问三次握手和四次挥手">1.1 问：三次握手和四次挥手</h3>
+<p>为什么要进行三次握手：为了确认对方的发送和接收能力。</p>
+<h4 id="三次握手">三次握手</h4>
+<p>三次握手主要流程：</p>
 <ul>
-<li>slice 是一个包含 data、cap 和 len 的结构体；</li>
-<li>hash 是一个指向 hmap 结构体的指针；</li>
-<li>ch 是一个指向 hchan 结构体的指针。</li>
+<li>一开始双方处于 <code>CLOSED</code>状态，然后服务端开始监听某个端口进入 <code>LISTEN</code> 状态</li>
+<li>然后客户端主动发起连接，发送 <code>SYN</code>，然后自己变为 <code>SYN-SENT</code>，<code>seq = x</code></li>
+<li>服务端收到之后，返回 <code>SYN seq = y</code> 和 <code>ACK ack = x + 1</code>（对于客户端发来的 SYN），自己变成 <code>SYN-REVD</code></li>
+<li>之后客户端再次发送 <code>ACK seq = x + 1</code>,<code>ack = y + 1</code>给服务端，自己变成 <code>EASTABLISHED</code> 状态，服务端收到 <code>ACK</code>，也进入<code>ESTABLISHED</code></li>
 </ul>
-<p>而另一个用于初始化数据结构的关键字 new 的作用其实就非常简单了，它只是接收一个类型作为参数然后返回一个指向这个类型的指针：</p>
-<pre><code class="language-go">i := new(int)
-var v int
-i := &amp;v
-</code></pre>
-<p>上述代码片段中的两种不同初始化方法其实是等价的，它们都会创建一个指向 int 零值的指针。<br>
-<img src="https://stardemo.github.io/post-images/1590031666594.jpeg" alt="" loading="lazy"><br>
-到了这里我们对Go语言中这两种不同关键字的使用也有了一定的了解：<code>make 用于创建切片、哈希表和管道等内置数据结构，new 用于分配并创建一个指向对应类型的指针</code>。</p>
-<h1 id="实现原理">实现原理</h1>
-<p>接下来我们将分别介绍 make 和 new 在初始化不同数据结构时的具体过程，我们会从编译期间和运行时两个不同的阶段理解这两个关键字的原理。</p>
-<h2 id="make">make</h2>
-<p>我们已经了解了 make 在创建数组和切片、哈希表和 Channel 的具体过程，所以在这里我们也只是会简单提及 make 相关的数据结构初始化原理。<br>
-<img src="https://stardemo.github.io/post-images/1590031718876.gif" alt="" loading="lazy"><br>
-在编译期间的类型检查阶段，Go语言其实就将代表 make 关键字的 OMAKE 节点根据参数类型的不同转换成了 OMAKESLICE、OMAKEMAP 和 OMAKECHAN 三种不同类型的节点，这些节点最终也会调用不同的运行时函数来初始化数据结构。</p>
-<h2 id="new">new</h2>
-<p>内置函数 new 会在编译期间的 SSA 代码生成阶段经过 callnew 函数的处理，如果请求创建的类型大小是 0，那么就会返回一个表示空指针的 zerobase 变量，在遇到其他情况时会将关键字转换成 newobject：</p>
-<pre><code class="language-go">func callnew(t *types.Type) *Node {
-    if t.NotInHeap() {
-        yyerror(&quot;%v is go:notinheap; heap allocation disallowed&quot;, t)
-    }
-    dowidth(t)
- 
-    if t.Size() == 0 {
-        z := newname(Runtimepkg.Lookup(&quot;zerobase&quot;))
-        z.SetClass(PEXTERN)
-        z.Type = t
-        return typecheck(nod(OADDR, z, nil), ctxExpr)
-    }
- 
-    fn := syslook(&quot;newobject&quot;)
-    fn = substArgTypes(fn, t)
-    v := mkcall1(fn, types.NewPtr(t), nil, typename(t))
-    v.SetNonNil(true)
-    return v
-}
-</code></pre>
-<p>需要提到的是，哪怕当前变量是使用 var 进行初始化，在这一阶段也可能会被转换成 newobject 的函数调用并在堆上申请内存：</p>
-<pre><code class="language-go">func walkstmt(n *Node) *Node {
-    switch n.Op {
-    case ODCL:
-        v := n.Left
-        if v.Class() == PAUTOHEAP {
-            if prealloc[v] == nil {
-                prealloc[v] = callnew(v.Type)
-            }
-            nn := nod(OAS, v.Name.Param.Heapaddr, prealloc[v])
-            nn.SetColas(true)
-            nn = typecheck(nn, ctxStmt)
-            return walkstmt(nn)
-        }
-    case ONEW:
-        if n.Esc == EscNone {
-            r := temp(n.Type.Elem())
-            r = nod(OAS, r, nil)
-            r = typecheck(r, ctxStmt)
-            init.Append(r)
-            r = nod(OADDR, r.Left, nil)
-            r = typecheck(r, ctxExpr)
-            n = r
-        } else {
-            n = callnew(n.Type.Elem())
-        }
-    }
-}
-</code></pre>
-<p>当然这也不是绝对的，如果当前声明的变量或者参数不需要在当前作用域外生存，那么其实就不会被初始化在堆上，而是会初始化在当前函数的栈中并随着函数调用的结束而被销毁。</p>
-<p>newobject 函数的工作就是获取传入类型的大小并调用 mallocgc 在堆上申请一片大小合适的内存空间并返回指向这片内存空间的指针：</p>
-<pre><code>func newobject(typ *_type) unsafe.Pointer {
-    return mallocgc(typ.size, typ, true)
-}
-</code></pre>
-<h1 id="总结">总结</h1>
-<p>最后，简单总结一下Go语言中 make 和 new 关键字的实现原理，make 关键字的主要作用是创建切片、哈希表和 Channel 等内置的数据结构，而 new 的主要作用是为类型申请一片内存空间，并返回指向这片内存的指针。</p>
-<p>————————————————<br>
-版权声明：本文为CSDN博主「浅汐王」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
-原文链接：https://blog.csdn.net/qq_32252917/java/article/details/102953438</p>
+<p><code>SYN 需要对端确认，所以 ACK 的序列化要加一，凡是需要对端确认的，一点要消耗 TCP 报文的序列化</code></p>
+<h4 id="为什么不是两次">为什么不是两次？</h4>
+<p><code>无法确认客户端的接收能力。</code></p>
+<p>如果首先客户端发送了 SYN 报文，但是滞留在网络中，TCP 以为丢包了，然后重传，两次握手建立了连接。<br>
+等到客户端关闭连接了。但是之后这个包如果到达了服务端，那么服务端接收到了，然后发送相应的数据表，就建立了链接，但是此时客户端已经关闭连接了，所以带来了链接资源的浪费。</p>
+<h4 id="为什么不是四次">为什么不是四次？</h4>
+<p><code>四次以上都可以，只不过 三次就够了</code></p>
+<h4 id="四次挥手">四次挥手</h4>
+<ul>
+<li>一开始都处于 ESTABLISH 状态，然后客户端发送 FIN 报文，带上 seq = p，状态变为 FIN-WAIT-1</li>
+<li>服务端收到之后，发送 ACK 确认，ack = p + 1，然后进入 CLOSE-WAIT 状态</li>
+<li>客户端收到之后进入 FIN-WAIT-2  状态</li>
+<li>过了一会等数据处理完，再次发送 FIN、ACK，seq = q，ack = p + 1，进入 LAST-ACK 阶段</li>
+<li>客户端收到 FIN 之后，客户端收到之后进入 TIME_WAIT（等待 2MSL），然后发送 ACK 给服务端 ack = 1 + 1</li>
+<li>服务端收到之后进入 CLOSED 状态</li>
+</ul>
+<p>客户端这个时候还需要等待两次 MSL 之后，如果没有收到服务端的重发请求，就表明 ACK 成功到达，挥手结束，客户端变为 CLOSED 状态，否则进行 ACK 重发</p>
+<h4 id="为什么需要等待-2mslmaximum-segement-lifetime">为什么需要等待 2MSL（Maximum Segement Lifetime）：</h4>
+<p>因为如果不等待的话，如果服务端还有很多数据包要给客户端发，且此时客户端端口被新应用占据，那么就会接收到无用的数据包，造成数据包混乱，所以说最保险的方法就是等服务器发来的数据包都死翘翘了再启动新应用。</p>
+<ul>
+<li>1个 MSL 保证四次挥手中主动关闭方最后的 ACK 报文能最终到达对端</li>
+<li>1个 MSL 保证对端没有收到 ACK 那么进行重传的 FIN 报文能够到达</li>
+</ul>
+<h4 id="为什么是四次而不是三次">为什么是四次而不是三次？</h4>
+<p>如果是三次的话，那么服务端的 ACK 和 FIN 合成一个挥手，那么长时间的延迟可能让 TCP 一位 FIN 没有达到服务器端，然后让客户的不断的重发 FIN</p>
+<h4 id="参考资料">参考资料</h4>
+<ul>
+<li><a href="https://zhuanlan.zhihu.com/p/86426969">https://zhuanlan.zhihu.com/p/86426969</a></li>
+<li><a href="https://juejin.cn/post/6844904070889603085">https://juejin.cn/post/6844904070889603085</a></li>
+</ul>
+<h2 id="n-转载源">n. 转载源</h2>
+<ul>
+<li><a href="https://juejin.cn/post/6939691851746279437">juejin-图雀社区-字节跳动最爱考的前端面试题：计算机网络基础</a></li>
+</ul>
 
             </div>
             <div class="post-footer">
@@ -686,7 +640,7 @@ i := &amp;v
     </li>
     <li class="post-copyright-link">
       <strong>本文链接：</strong>
-      <a href="https://stardemo.github.io/post/diff-make-and-new/" title="[Go]make和new关键字的区别及实现原理">https://stardemo.github.io/post/diff-make-and-new/</a>
+      <a href="https://stardemo.github.io/post/mian-jing-chang-jian-mian-shi-wen-da-zheng-li/" title="[面经] 常见面试问答整理">https://stardemo.github.io/post/mian-jing-chang-jian-mian-shi-wen-da-zheng-li/</a>
     </li>
     <li class="post-copyright-license">
       <strong>版权声明： </strong>
@@ -695,21 +649,15 @@ i := &amp;v
   </ul>
   <div class="tags">
     
-      <a href="https://stardemo.github.io/tag/Golang/"># Golang</a>
-    
   </div>
   <div class="nav">
     <div class="nav-prev">
       
-        <i class="fa fa-chevron-left"></i>
-        <a class="nav-pc-next" title="[React]React实战(1)——Ant Design Pro项目history模式下相关配置" href="https://stardemo.github.io/post/reactreact-shi-zhan-1-ant-design-pro-xiang-mu-history-mo-shi-xia-xiang-guan-pei-zhi/">[React]React实战(1)——Ant Design Pro项目history模式下相关配置</a class="nav-pc-next">
-        <a class="nav-mobile-prev" title="[React]React实战(1)——Ant Design Pro项目history模式下相关配置" href="https://stardemo.github.io/post/reactreact-shi-zhan-1-ant-design-pro-xiang-mu-history-mo-shi-xia-xiang-guan-pei-zhi/">上一篇</a>
-      
     </div>
     <div class="nav-next">
       
-        <a class="nav-pc-next" title="Kubernetes日志采集Sidecar模式介绍" href="https://stardemo.github.io/post/kubernetes-ri-zhi-cai-ji-sidecar-mo-shi-jie-shao/">Kubernetes日志采集Sidecar模式介绍</a>
-        <a class="nav-mobile-next" title="Kubernetes日志采集Sidecar模式介绍" href="https://stardemo.github.io/post/kubernetes-ri-zhi-cai-ji-sidecar-mo-shi-jie-shao/">下一篇</a>
+        <a class="nav-pc-next" title="MacOS 下使用nvm管理node环境" href="https://stardemo.github.io/post/macos-xia-shi-yong-nvm-guan-li-node-huan-jing/">MacOS 下使用nvm管理node环境</a>
+        <a class="nav-mobile-next" title="MacOS 下使用nvm管理node环境" href="https://stardemo.github.io/post/macos-xia-shi-yong-nvm-guan-li-node-huan-jing/">下一篇</a>
         <i class="fa fa-chevron-right"></i>
       
     </div>
