@@ -8,7 +8,7 @@
 <meta name="keywords" content="starliu,istarboy,个人博客,运维,技术备忘录,docker,kubernetes,iot">
 <meta name="description" content="一个技术爱好者的备忘录">
 <meta name="theme-color" content="#000">
-<title>记录一次MYSQL参数调整 | Zone</title>
+<title>Makefile学习 | Zone</title>
 <link rel="shortcut icon" href="/favicon.ico?v=1620618994300">
 <link rel="stylesheet" href="/styles/main.css">
 <link rel="stylesheet" href="/media/css/gemini.css">
@@ -29,7 +29,7 @@
 
 
 
-  <meta name="description" content="记录一次MYSQL参数调整" />
+  <meta name="description" content="Makefile学习" />
   <meta name="keywords" content="" />
 </head>
 
@@ -264,11 +264,15 @@
   <div class="toc-wrapper auto-number auto"
     id="toc_wrapper">
     <ul class="markdownIt-TOC">
-<li><a href="#mysql%E7%9A%84%E5%8F%82%E6%95%B0%E8%B0%83%E6%95%B4">MySQL的参数调整</a>
+<li>
 <ul>
-<li><a href="#%E9%97%AE%E9%A2%98">问题</a></li>
-<li><a href="#%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95">解决办法</a></li>
-<li><a href="#k8s%E6%A8%A1%E5%BC%8Fconfigmap%E6%B3%A8%E5%85%A5">k8s模式configmap注入</a></li>
+<li><a href="#makefile%E4%B8%ADphony%E7%9A%84%E4%BD%9C%E7%94%A8">Makefile中.PHONY的作用</a>
+<ul>
+<li><a href="#%E4%B8%BE%E4%BE%8B">举例:</a></li>
+<li><a href="#%E5%B0%8F%E7%BB%93">小结：</a></li>
+<li><a href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99">参考资料：</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -536,8 +540,8 @@
           <div class="section bg-color post post-page">
             <header class="post-header">
   <h1 class="post-title">
-    <a class="post-title-link" href="https://stardemo.github.io/post/record-mysql-config-settings/">
-      记录一次MYSQL参数调整
+    <a class="post-title-link" href="https://stardemo.github.io/post/study-makefile/">
+      Makefile学习
     </a>
   </h1>
   <div class="post-meta">
@@ -545,23 +549,23 @@
     <span class="meta-item pc-show">
       <i class="fa fa-calendar-o"></i>
       <span>发布于</span>
-      <span>2019-10-12</span>
+      <span>2021-05-10</span>
       <span class="post-meta-divider pc-show">|</span>
     </span>
     
     <span class="meta-item">
       <i class="fa fa-clock-o"></i>
-      <span>3分钟</span>
+      <span>2分钟</span>
     </span>
     <span class="meta-item">
       <span class="post-meta-divider">|</span>
       <i class="fa fa-file-word-o"></i>
-      <span>411<span class="pc-show">字数</span></span>
+      <span>375<span class="pc-show">字数</span></span>
     </span>
     
     
     
-    <span id="/post/record-mysql-config-settings/" data-flag-title="记录一次MYSQL参数调整" class="meta-item pc-show leancloud_visitors">
+    <span id="/post/study-makefile/" data-flag-title="Makefile学习" class="meta-item pc-show leancloud_visitors">
       <span class="post-meta-divider">|</span>
       <i class="fa fa-eye"></i>
       <span>浏览量：<span class="leancloud-visitors-count"></span></span>
@@ -570,91 +574,60 @@
   </div>
 </header>
             <div class="post-body next-md-body" id="post_body">
-              <p>公司运维基础架构迭代过程中，MYSQL由5.6升级至5.7过程中遇到5.7的强规范限制导致的不兼容老系统，修改参数以适应原有系统。</p>
-<!--more-->
-<h1 id="mysql的参数调整">MySQL的参数调整</h1>
-<h2 id="问题">问题</h2>
-<p>因为业务老旧sql原因需要禁用<code>ONLY_FULL_GROUP_BY</code></p>
-<ul>
-<li>查询MYSQL版本</li>
-</ul>
-<pre><code class="language-shell">mysql&gt; select version();
+              <p>整理学习 -_-｜</p>
+<!-- more -->
+<h2 id="makefile中phony的作用">Makefile中.PHONY的作用</h2>
+<p>单词phony (即phoney)的意思是：伪造的，假的。来自collins的解释是：</p>
+<pre><code>If you describe something as phoney, you disapprove of it because it is false 
+rather than genuine. 
 </code></pre>
-<ul>
-<li>sql_mode查询</li>
-</ul>
-<pre><code class="language-shell">mysql&gt; select @@GLOBAL.sql_mode;
-+-------------------------------------------------------------------------------------------------------------------------------------------+
-| @@GLOBAL.sql_mode                                                                                                                         |
-+-------------------------------------------------------------------------------------------------------------------------------------------+
-| ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION |
-+-------------------------------------------------------------------------------------------------------------------------------------------+
-1 row in set
-
-mysql&gt; 
+<p>那么，在Makefile中，.PHONY后面的target表示的也是一个伪造的target, 而不是真实存在的文件target，注意Makefile的target默认是文件。</p>
+<h3 id="举例">举例:</h3>
+<pre><code class="language-shell">$ cat -n Makefile1
+     1    clean:
+     2        rm -f foo
+$ cat -n Makefile2
+     1    .PHONY: clean
+     2    clean:
+     3        rm -f foo
 </code></pre>
-<h2 id="解决办法">解决办法</h2>
-<p>重新设置sql_mode，来关闭这个选项。</p>
-<ul>
-<li>1.临时禁用<br>
-在sql终端中执行如下</li>
-</ul>
-<pre><code class="language-shell">mysql&gt; set @@GLOBAL.sql_mode = 'STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';
-mysql&gt; 
+<p>Makefile1和Makefile2的差别就是在Makefile2中定义了：</p>
+<pre><code>1 .PHONY: clean
 </code></pre>
-<ul>
-<li>2.永久修改<br>
-在mysql配置文件的mysqld节点下增加如下内容</li>
-</ul>
-<pre><code>sql_mode='STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION'
+<p>直接Make看看:</p>
+<pre><code class="language-shell">$ ls -l
+total 8
+-rw-r--r-- 1 huanli huanli 18 Jul 13 17:51 Makefile1
+-rw-r--r-- 1 huanli huanli 32 Jul 13 17:51 Makefile2
+$ make -f Makefile1 clean
+rm -f foo
+$ make -f Makefile2 clean
+rm -f foo
 </code></pre>
-<h2 id="k8s模式configmap注入">k8s模式configmap注入</h2>
-<ul>
-<li>1.原理</li>
-</ul>
-<p>永久修改mysqld节点下参数，使用k8s的<code>volumeMounts</code>挂入路径<code>/etc/mysql/mysql.conf.d/mysqld.cnf</code></p>
-<ul>
-<li>
-<p>2.ConfigMap内容</p>
-<pre><code class="language-yaml">apiVersion: v1
-data:
-  mysqld.cnf: |-
-    # Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
-    #
-    # This program is free software; you can redistribute it and/or modify
-    # it under the terms of the GNU General Public License as published by
-    # the Free Software Foundation; version 2 of the License.
-    #
-    # This program is distributed in the hope that it will be useful,
-    # but WITHOUT ANY WARRANTY; without even the implied warranty of
-    # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    # GNU General Public License for more details.
-    #
-    # You should have received a copy of the GNU General Public License
-    # along with this program; if not, write to the Free Software
-    # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
-
-    #
-    # The MySQL  Server configuration file.
-    #
-    # For explanations see
-    # http://dev.mysql.com/doc/mysql/en/server-system-variables.html
-
-    [mysqld]
-    pid-file        = /var/run/mysqld/mysqld.pid
-    socket          = /var/run/mysqld/mysqld.sock
-    datadir         = /var/lib/mysql
-    log-error       = /var/log/mysql/error.log
-    # Disabling symbolic-links is recommended to prevent assorted security risks
-    symbolic-links=0
-    sql_mode='STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION'
-kind: ConfigMap
-metadata:
-  name: mysql-config-add
-  namespace: cb-common
-
+<p>这么观察 Makefile1/Makefile2没什么区别</p>
+<p>再创建一个文件起名clean, 再make看看</p>
+<pre><code class="language-shell">$ touch clean
+$ ls -l
+total 8
+-rw-r--r-- 1 huanli huanli  0 Jul 13 18:06 clean
+-rw-r--r-- 1 huanli huanli 18 Jul 13 17:51 Makefile1
+-rw-r--r-- 1 huanli huanli 32 Jul 13 17:51 Makefile2
+$ make -f Makefile1 clean
+make: 'clean' is up to date.
+$ make -f Makefile2 clean
+rm -f foo
 </code></pre>
-</li>
+<p>区别来了，Makefile1拒绝了执行clean, 因为文件clean存在。而Makefile2却不理会文件clean的存在，总是执行clean后面的规则。由此可见，.PHONY clean发挥了作用。</p>
+<h3 id="小结">小结：</h3>
+<pre><code class="language-makefile">.PHONY: clean
+    o means the word &quot;clean&quot; doesn't represent a file name in this Makefile;
+    o means the Makefile has nothing to do with a file called &quot;clean&quot; 
+      in the same directory.
+</code></pre>
+<h3 id="参考资料">参考资料：</h3>
+<ul>
+<li>(Phony Targets of GNU Make)[https://www.gnu.org/software/make/manual/html_node/Phony-Targets.html]</li>
+<li>(Veli Cnblogs)[https://www.cnblogs.com/idorax/p/9306528.html]</li>
 </ul>
 
             </div>
@@ -666,7 +639,7 @@ metadata:
     </li>
     <li class="post-copyright-link">
       <strong>本文链接：</strong>
-      <a href="https://stardemo.github.io/post/record-mysql-config-settings/" title="记录一次MYSQL参数调整">https://stardemo.github.io/post/record-mysql-config-settings/</a>
+      <a href="https://stardemo.github.io/post/study-makefile/" title="Makefile学习">https://stardemo.github.io/post/study-makefile/</a>
     </li>
     <li class="post-copyright-license">
       <strong>版权声明： </strong>
@@ -679,15 +652,11 @@ metadata:
   <div class="nav">
     <div class="nav-prev">
       
-        <i class="fa fa-chevron-left"></i>
-        <a class="nav-pc-next" title="前端路由-Hash" href="https://stardemo.github.io/post/frontend-router-hash/">前端路由-Hash</a class="nav-pc-next">
-        <a class="nav-mobile-prev" title="前端路由-Hash" href="https://stardemo.github.io/post/frontend-router-hash/">上一篇</a>
-      
     </div>
     <div class="nav-next">
       
-        <a class="nav-pc-next" title="Linux dd实战" href="https://stardemo.github.io/post/linux-dd-shellcmd/">Linux dd实战</a>
-        <a class="nav-mobile-next" title="Linux dd实战" href="https://stardemo.github.io/post/linux-dd-shellcmd/">下一篇</a>
+        <a class="nav-pc-next" title="乱七八糟折腾一路的记录" href="https://stardemo.github.io/post/memory-of-fun/">乱七八糟折腾一路的记录</a>
+        <a class="nav-mobile-next" title="乱七八糟折腾一路的记录" href="https://stardemo.github.io/post/memory-of-fun/">下一篇</a>
         <i class="fa fa-chevron-right"></i>
       
     </div>

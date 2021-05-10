@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://stardemo.github.io</id>
     <title>Zone</title>
-    <updated>2021-05-10T03:48:19.869Z</updated>
+    <updated>2021-05-10T03:56:37.841Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://stardemo.github.io"/>
     <link rel="self" href="https://stardemo.github.io/atom.xml"/>
@@ -10,6 +10,71 @@
     <logo>https://stardemo.github.io/images/avatar.png</logo>
     <icon>https://stardemo.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, Zone</rights>
+    <entry>
+        <title type="html"><![CDATA[Makefile学习]]></title>
+        <id>https://stardemo.github.io/post/study-makefile/</id>
+        <link href="https://stardemo.github.io/post/study-makefile/">
+        </link>
+        <updated>2021-05-10T03:50:07.000Z</updated>
+        <summary type="html"><![CDATA[<p>整理学习 -_-｜</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>整理学习 -_-｜</p>
+<!-- more -->
+<h2 id="makefile中phony的作用">Makefile中.PHONY的作用</h2>
+<p>单词phony (即phoney)的意思是：伪造的，假的。来自collins的解释是：</p>
+<pre><code>If you describe something as phoney, you disapprove of it because it is false 
+rather than genuine. 
+</code></pre>
+<p>那么，在Makefile中，.PHONY后面的target表示的也是一个伪造的target, 而不是真实存在的文件target，注意Makefile的target默认是文件。</p>
+<h3 id="举例">举例:</h3>
+<pre><code class="language-shell">$ cat -n Makefile1
+     1    clean:
+     2        rm -f foo
+$ cat -n Makefile2
+     1    .PHONY: clean
+     2    clean:
+     3        rm -f foo
+</code></pre>
+<p>Makefile1和Makefile2的差别就是在Makefile2中定义了：</p>
+<pre><code>1 .PHONY: clean
+</code></pre>
+<p>直接Make看看:</p>
+<pre><code class="language-shell">$ ls -l
+total 8
+-rw-r--r-- 1 huanli huanli 18 Jul 13 17:51 Makefile1
+-rw-r--r-- 1 huanli huanli 32 Jul 13 17:51 Makefile2
+$ make -f Makefile1 clean
+rm -f foo
+$ make -f Makefile2 clean
+rm -f foo
+</code></pre>
+<p>这么观察 Makefile1/Makefile2没什么区别</p>
+<p>再创建一个文件起名clean, 再make看看</p>
+<pre><code class="language-shell">$ touch clean
+$ ls -l
+total 8
+-rw-r--r-- 1 huanli huanli  0 Jul 13 18:06 clean
+-rw-r--r-- 1 huanli huanli 18 Jul 13 17:51 Makefile1
+-rw-r--r-- 1 huanli huanli 32 Jul 13 17:51 Makefile2
+$ make -f Makefile1 clean
+make: 'clean' is up to date.
+$ make -f Makefile2 clean
+rm -f foo
+</code></pre>
+<p>区别来了，Makefile1拒绝了执行clean, 因为文件clean存在。而Makefile2却不理会文件clean的存在，总是执行clean后面的规则。由此可见，.PHONY clean发挥了作用。</p>
+<h3 id="小结">小结：</h3>
+<pre><code class="language-makefile">.PHONY: clean
+    o means the word &quot;clean&quot; doesn't represent a file name in this Makefile;
+    o means the Makefile has nothing to do with a file called &quot;clean&quot; 
+      in the same directory.
+</code></pre>
+<h3 id="参考资料">参考资料：</h3>
+<ul>
+<li>(Phony Targets of GNU Make)[https://www.gnu.org/software/make/manual/html_node/Phony-Targets.html]</li>
+<li>(Veli Cnblogs)[https://www.cnblogs.com/idorax/p/9306528.html]</li>
+</ul>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[乱七八糟折腾一路的记录]]></title>
         <id>https://stardemo.github.io/post/memory-of-fun/</id>
@@ -527,97 +592,6 @@ olcDbIndex: uid pres,eq,sub
 EOF
 ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f mdb-index.ldif
 </code></pre>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[阿里云K8s实践笔记]]></title>
-        <id>https://stardemo.github.io/post/a-li-yun-k8s-zui-jia-shi-jian-bi-ji/</id>
-        <link href="https://stardemo.github.io/post/a-li-yun-k8s-zui-jia-shi-jian-bi-ji/">
-        </link>
-        <updated>2020-09-16T03:36:16.000Z</updated>
-        <summary type="html"><![CDATA[<p>记录使用阿里云ACK容器服务以及阿里云的各服务的总结笔记</p>
-]]></summary>
-        <content type="html"><![CDATA[<p>记录使用阿里云ACK容器服务以及阿里云的各服务的总结笔记</p>
-<!-- more -->
-<h2 id="1-配置阿里云slb到集群的ingress">1. 配置阿里云SLB到集群的Ingress</h2>
-<h3 id="11-同时使用私网slb与公网slb配合">1.1 同时使用私网SLB与公网SLB配合</h3>
-<p><em>对于一些特殊场景，您期望容器集群内的服务既能允许公网访问，同时又希望能被同一个VPC下的其他服务直接访问（不经过公网）。您只需额外部署一个kube-system/nginx-ingress-lb-intranet服务。</em></p>
-<p>使用阿里云创建的容器集群默认已经创建了一个绑定到公网的SLB，位于<code>kube-system</code>下。创建一个符合期望配置的内网SLB实例，新增一个Service描述，使集群自动绑定监听到SLB。</p>
-<p>配置模版</p>
-<pre><code class="language-yaml"># intranet nginx ingress slb service
-apiVersion: v1
-kind: Service
-metadata:
- # 这里服务取名为nginx-ingress-lb-intranet
- name: nginx-ingress-lb-intranet
- namespace: kube-system
- labels:
-   app: nginx-ingress-lb-intranet
- annotations:
-   # 指明SLB实例地址类型为私网类型
-   service.beta.kubernetes.io/alicloud-loadbalancer-address-type: intranet
-   # 修改为您的私网SLB实例ID
-   service.beta.kubernetes.io/alicloud-loadbalancer-id: &lt;YOUR_INTRANET_SLB_ID&gt;
-   # 是否自动创建SLB端口监听（会覆写已有端口监听），也可手动创建端口监听
-   service.beta.kubernetes.io/alicloud-loadbalancer-force-override-listeners: 'true'
-spec:
- type: LoadBalancer
- # route traffic to other nodes
- externalTrafficPolicy: &quot;Cluster&quot;
- ports:
- - port: 80
-   name: http
-   targetPort: 80
- - port: 443
-   name: https
-   targetPort: 443
- selector:
-   # select app=ingress-nginx pods
-   app: ingress-nginx
-</code></pre>
-<p>创建服务之后通过如下命令,查看svc状态</p>
-<pre><code class="language-shell"> kubectl -n kube-system get svc | grep nginx-ingress-lb
-</code></pre>
-<h2 id="2-coredns的特殊用法">2. CoreDNS的特殊用法</h2>
-<h3 id="21-coredns拦截域名解析">2.1 CoreDNS拦截域名解析</h3>
-<p>在内网多个集群的场景下，有些域名需要解析到内网避免出现公网流量，之前处理方案有如下几种:</p>
-<ul>
-<li>在VPC内网内自建一个DNS服务器，将所有服务器的DNS指向自建的DNS服务器
-<ul>
-<li>问题: 需要考虑到DNS的高可用以及故障容灾难</li>
-<li>优势: 集中化,便于统一维护管理更新</li>
-</ul>
-</li>
-<li>在主机配置Hosts文件
-<ul>
-<li>问题: 主机较多，维护成本上涨</li>
-<li>优势: 操作简单，技术成本较低</li>
-</ul>
-</li>
-<li>K8s容器集群内CoreDNS</li>
-</ul>
-<p>Kubernetes本身具有集群DNS组件，此处使用的为CoreDNS，工作负载的DNS默认策略为<code>ClusterFirst</code>,此时Pods内程序解析DNS会优先查询集群的DNS组件，所以此时可以在集群DNS层面进行解析拦截覆盖。</p>
-<p>CoreDNS的配置使用的ConfigMap,而ConfigMap支持热更新,修改ConfigMap后CoreDNS自动生效。配置如下:</p>
-<pre><code>.:5353 {
-cache 30
-errors
-health
-kubernetes cluster.local in-addr.arpa ip6.arpa {
-pods insecure
-upstream /etc/resolv.conf
-fallthrough in-addr.arpa ip6.arpa
-}
-loadbalance round_robin
-hosts {
-122.212.222.111 aaa.bbb.com
-fallthrough
-}
-prometheus 0.0.0.0:9153
-proxy . /etc/resolv.conf
-reload
-}
-</code></pre>
-<p>把需要的DNS规格写入Hosts节点下，即可进行集群层面的解析配置。</p>
 ]]></content>
     </entry>
 </feed>
