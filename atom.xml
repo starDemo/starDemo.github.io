@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://stardemo.github.io</id>
     <title>Zone</title>
-    <updated>2021-05-10T03:56:37.841Z</updated>
+    <updated>2021-05-10T06:16:48.506Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://stardemo.github.io"/>
     <link rel="self" href="https://stardemo.github.io/atom.xml"/>
@@ -70,8 +70,8 @@ rm -f foo
 </code></pre>
 <h3 id="参考资料">参考资料：</h3>
 <ul>
-<li>(Phony Targets of GNU Make)[https://www.gnu.org/software/make/manual/html_node/Phony-Targets.html]</li>
-<li>(Veli Cnblogs)[https://www.cnblogs.com/idorax/p/9306528.html]</li>
+<li><a href="https://www.gnu.org/software/make/manual/html_node/Phony-Targets.html">Phony Targets of GNU Make</a></li>
+<li><a href="https://www.cnblogs.com/idorax/p/9306528.html">Veli Cnblogs</a></li>
 </ul>
 ]]></content>
     </entry>
