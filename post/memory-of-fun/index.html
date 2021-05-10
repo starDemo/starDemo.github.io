@@ -8,7 +8,7 @@
 <meta name="keywords" content="starliu,istarboy,个人博客,运维,技术备忘录,docker,kubernetes,iot">
 <meta name="description" content="一个技术爱好者的备忘录">
 <meta name="theme-color" content="#000">
-<title>Shell统计IP出现频次 | Zone</title>
+<title>乱七八糟折腾一路的记录 | Zone</title>
 <link rel="shortcut icon" href="/favicon.ico?v=1620618331442">
 <link rel="stylesheet" href="/styles/main.css">
 <link rel="stylesheet" href="/media/css/gemini.css">
@@ -29,7 +29,7 @@
 
 
 
-  <meta name="description" content="Shell统计IP出现频次" />
+  <meta name="description" content="乱七八糟折腾一路的记录" />
   <meta name="keywords" content="" />
 </head>
 
@@ -264,15 +264,11 @@
   <div class="toc-wrapper auto-number auto"
     id="toc_wrapper">
     <ul class="markdownIt-TOC">
-<li>
+<li><a href="#%E6%99%BA%E8%83%BD%E6%89%8B%E6%9C%BA">智能手机</a>
 <ul>
-<li><a href="#%E7%BB%9F%E8%AE%A1%E6%96%87%E4%BB%B6%E9%87%8C%E7%9A%84ip">统计文件里的IP</a>
-<ul>
-<li><a href="#%E5%87%86%E5%A4%87%E6%96%87%E4%BB%B6">准备文件</a></li>
-<li><a href="#%E7%BB%9F%E8%AE%A1">统计</a></li>
-</ul>
-</li>
-<li><a href="#%E7%BB%9F%E8%AE%A1netstat-ntu%E5%91%BD%E4%BB%A4%E7%9A%84%E7%BB%93%E6%9E%9C%E4%B8%AD%E5%87%BA%E7%8E%B0%E6%AC%A1%E6%95%B0%E6%9C%80%E5%A4%9A%E7%9A%84ip%E5%9C%B0%E5%9D%80">统计<code>netstat -ntu</code>命令的结果中出现次数最多的ip地址：</a></li>
+<li><a href="#%E5%88%9D%E8%A7%81%E6%89%8B%E6%9C%BA">初见手机</a></li>
+<li><a href="#%E5%8F%AF%E4%BB%A5%E4%B8%8A%E7%BD%91%E4%BA%86gprsedge">可以上网了，GPRS/EDGE</a></li>
+<li><a href="#%E7%AC%AC%E4%B8%80%E9%83%A8%E8%87%AA%E5%B7%B1%E7%9A%84%E6%89%8B%E6%9C%BA-nokia-5200">第一部自己的手机-Nokia 5200</a></li>
 </ul>
 </li>
 </ul>
@@ -540,8 +536,8 @@
           <div class="section bg-color post post-page">
             <header class="post-header">
   <h1 class="post-title">
-    <a class="post-title-link" href="https://stardemo.github.io/post/shell-tong-ji-ip-chu-xian-pin-ci/">
-      Shell统计IP出现频次
+    <a class="post-title-link" href="https://stardemo.github.io/post/memory-of-fun/">
+      乱七八糟折腾一路的记录
     </a>
   </h1>
   <div class="post-meta">
@@ -549,23 +545,23 @@
     <span class="meta-item pc-show">
       <i class="fa fa-calendar-o"></i>
       <span>发布于</span>
-      <span>2019-03-15</span>
+      <span>2021-05-10</span>
       <span class="post-meta-divider pc-show">|</span>
     </span>
     
     <span class="meta-item">
       <i class="fa fa-clock-o"></i>
-      <span>3分钟</span>
+      <span>2分钟</span>
     </span>
     <span class="meta-item">
       <span class="post-meta-divider">|</span>
       <i class="fa fa-file-word-o"></i>
-      <span>534<span class="pc-show">字数</span></span>
+      <span>311<span class="pc-show">字数</span></span>
     </span>
     
     
     
-    <span id="/post/shell-tong-ji-ip-chu-xian-pin-ci/" data-flag-title="Shell统计IP出现频次" class="meta-item pc-show leancloud_visitors">
+    <span id="/post/memory-of-fun/" data-flag-title="乱七八糟折腾一路的记录" class="meta-item pc-show leancloud_visitors">
       <span class="post-meta-divider">|</span>
       <i class="fa fa-eye"></i>
       <span>浏览量：<span class="leancloud-visitors-count"></span></span>
@@ -574,74 +570,15 @@
   </div>
 </header>
             <div class="post-body next-md-body" id="post_body">
-              <p>统计文件或者系统内IP出现频率</p>
-<!--more-->
-<h2 id="统计文件里的ip">统计文件里的IP</h2>
-<h3 id="准备文件">准备文件</h3>
-<p>首先准备文件demo.txt，内容如下：</p>
-<pre><code>1 192.168.41.20 
-2 192.168.41.21 
-3 192.168.41.22 
-4 192.168.41.23 
-5 192.168.41.24 
-6 192.168.41.25
-</code></pre>
-<h3 id="统计">统计</h3>
-<p>统计出现次数最多的ip次数：</p>
-<pre><code>cat demo.txt | awk '{print $2}' | sort | uniq -c | sort -n -r | head -n 1
-</code></pre>
-<p>注：</p>
-<pre><code>awk '{ print $2}'：取数据的第2域（第2列），第一列是标号（1，2，3...）,第二列是ip地址
-
-sort：对IP部分进行排序。
-
-uniq -c：打印每一重复行出现的次数。（并去掉重复行）
-
-sort -n -r：按照重复行出现的次序倒序排列。
-
-head -n 1：取排在第一位的ip地址
-</code></pre>
-<h2 id="统计netstat-ntu命令的结果中出现次数最多的ip地址">统计<code>netstat -ntu</code>命令的结果中出现次数最多的ip地址：</h2>
-<p>执行命令 <code>netstat -ntu</code>，显示结果如下：</p>
-<pre><code>Active Internet connections (w/o servers) 
-Proto Recv-Q Send-Q Local Address Foreign Address State 
-tcp 0 0 127.0.0.1:8152 127.0.0.1:4193 TIME_WAIT 
-tcp 0 0 127.0.0.1:8152 127.0.0.1:4192 TIME_WAIT 
-tcp 0 0 127.0.0.1:8152 127.0.0.1:4196 TIME_WAIT 
-tcp 0 0 127.0.0.1:8152 127.0.0.1:4199 TIME_WAIT 
-tcp 0 0 127.0.0.1:8152 127.0.0.1:4201 TIME_WAIT 
-tcp 0 0 127.0.0.1:8152 127.0.0.1:4204 TIME_WAIT 
-tcp 0 0 127.0.0.1:8152 127.0.0.1:4207 TIME_WAIT 
-tcp 0 0 127.0.0.1:8152 127.0.0.1:4210 TIME_WAIT 
-tcp 0 0 192.168.32.62:41682 192.168.47.27:5431 TIME_WAIT 
-tcp 0 0 192.168.32.62:41685 192.168.47.27:5431 TIME_WAIT
-</code></pre>
-<p>使用脚本命令进行统计：</p>
-<pre><code>netstat -ntu | tail -n +3|awk '{ print $5}' | cut -d : -f 1 | sort | uniq -c| sort -n -r | head -n 5
-</code></pre>
-<p>统计结果：</p>
-<pre><code>8 127.0.0.1
-2 192.168.47.27
-</code></pre>
-<p>注：</p>
-<pre><code>tail -n +3 :去掉上面用红色标明的两行。
-
-awk '{ print $5}'：取数据的第5域（第5列）
-
-cut -d : -f 1 ：取蓝色部分前面的IP部分。
-
-sort：对IP部分进行排序。
-
-uniq -c：打印每一重复行出现的次数。（并去掉重复行）
-
-sort -n -r：按照重复行出现的次序倒序排列。
-
-head -n 5：取排在前5位的IP 
-</code></pre>
-<hr>
-<p>作者：Hello_刘<br>
-来源：CSDN<br>
-原文：https://blog.csdn.net/xiamoyanyulrq/article/details/81570652</p>
+              <p>上了点年纪有事没事就爱整点回忆杀，立一个文章记录下过去这些年折腾的各种技术东西吧，包括且不限于智能手机，刷机，电脑，黑苹果，播放器，HiFi。</p>
+<!-- more -->
+<h1 id="智能手机">智能手机</h1>
+<h2 id="初见手机">初见手机</h2>
+<p>最开始见到手机还是2000年后吧，那是还是2G的年代，父亲的手机还是一个<code>Motorola</code>的绿色背光屏幕的功能机，移动互联网还不存在，手机还停留在GSM的2G年代，最大的快乐可能就是手机里几个内置的小游戏</p>
+<h2 id="可以上网了gprsedge">可以上网了，GPRS/EDGE</h2>
+<p>随着老妈买了一个NEC的翻盖手机，<code>NEC NK</code>，<img src="https://stardemo.github.io/post-images/1620618212616.jpg" alt="" loading="lazy">家里手机过渡到了彩屏时代，同时手机也支持了<code>GPRS/EDGE</code>，那时的流量费是真的贵(年少无知不懂事，不开套餐用老妈的手机上网玩，话费玩超了赔进去好多零花钱😭) 那个年代手机门户网站才开始出现，各种企业黄页，各家运营商都做了，质量都差不多。手机变成了彩屏，有了摄像头，可以安装Java小程序(性能真的差)。</p>
+<h2 id="第一部自己的手机-nokia-5200">第一部自己的手机-Nokia 5200</h2>
+<p><em><strong>持续更新......</strong></em></p>
 
             </div>
             <div class="post-footer">
@@ -652,7 +589,7 @@ head -n 5：取排在前5位的IP
     </li>
     <li class="post-copyright-link">
       <strong>本文链接：</strong>
-      <a href="https://stardemo.github.io/post/shell-tong-ji-ip-chu-xian-pin-ci/" title="Shell统计IP出现频次">https://stardemo.github.io/post/shell-tong-ji-ip-chu-xian-pin-ci/</a>
+      <a href="https://stardemo.github.io/post/memory-of-fun/" title="乱七八糟折腾一路的记录">https://stardemo.github.io/post/memory-of-fun/</a>
     </li>
     <li class="post-copyright-license">
       <strong>版权声明： </strong>
@@ -665,15 +602,11 @@ head -n 5：取排在前5位的IP
   <div class="nav">
     <div class="nav-prev">
       
-        <i class="fa fa-chevron-left"></i>
-        <a class="nav-pc-next" title="服务器SSH加固" href="https://stardemo.github.io/post/fu-wu-qi-ssh-jia-gu/">服务器SSH加固</a class="nav-pc-next">
-        <a class="nav-mobile-prev" title="服务器SSH加固" href="https://stardemo.github.io/post/fu-wu-qi-ssh-jia-gu/">上一篇</a>
-      
     </div>
     <div class="nav-next">
       
-        <a class="nav-pc-next" title="systemd实战" href="https://stardemo.github.io/post/systemd-shi-zhan/">systemd实战</a>
-        <a class="nav-mobile-next" title="systemd实战" href="https://stardemo.github.io/post/systemd-shi-zhan/">下一篇</a>
+        <a class="nav-pc-next" title="记录一次服务器磁盘容量不足的清理过程" href="https://stardemo.github.io/post/ji-lu-yi-ci-fu-wu-qi-ci-pan-rong-liang-bu-zu-de-qing-li-guo-cheng/">记录一次服务器磁盘容量不足的清理过程</a>
+        <a class="nav-mobile-next" title="记录一次服务器磁盘容量不足的清理过程" href="https://stardemo.github.io/post/ji-lu-yi-ci-fu-wu-qi-ci-pan-rong-liang-bu-zu-de-qing-li-guo-cheng/">下一篇</a>
         <i class="fa fa-chevron-right"></i>
       
     </div>

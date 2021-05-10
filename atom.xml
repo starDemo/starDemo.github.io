@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://stardemo.github.io</id>
     <title>Zone</title>
-    <updated>2021-05-07T15:50:55.770Z</updated>
+    <updated>2021-05-10T03:45:42.915Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://stardemo.github.io"/>
     <link rel="self" href="https://stardemo.github.io/atom.xml"/>
@@ -10,6 +10,25 @@
     <logo>https://stardemo.github.io/images/avatar.png</logo>
     <icon>https://stardemo.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, Zone</rights>
+    <entry>
+        <title type="html"><![CDATA[乱七八糟折腾一路的记录]]></title>
+        <id>https://stardemo.github.io/post/memory-of-fun/</id>
+        <link href="https://stardemo.github.io/post/memory-of-fun/">
+        </link>
+        <updated>2021-05-10T01:51:20.000Z</updated>
+        <summary type="html"><![CDATA[<p>上了点年纪有事没事就爱整点回忆杀，立一个文章记录下过去这些年折腾的各种技术东西吧，包括且不限于智能手机，刷机，电脑，黑苹果，播放器，HiFi。</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>上了点年纪有事没事就爱整点回忆杀，立一个文章记录下过去这些年折腾的各种技术东西吧，包括且不限于智能手机，刷机，电脑，黑苹果，播放器，HiFi。</p>
+<!-- more -->
+<h1 id="智能手机">智能手机</h1>
+<h2 id="初见手机">初见手机</h2>
+<p>最开始见到手机还是2000年后吧，那是还是2G的年代，父亲的手机还是一个<code>Motorola</code>的绿色背光屏幕的功能机，移动互联网还不存在，手机还停留在GSM的2G年代，最大的快乐可能就是手机里几个内置的小游戏</p>
+<h2 id="可以上网了gprsedge">可以上网了，GPRS/EDGE</h2>
+<p>随着老妈买了一个NEC的翻盖手机，<code>NEC NK</code>，<img src="https://stardemo.github.io/post-images/1620618212616.jpg" alt="" loading="lazy">家里手机过渡到了彩屏时代，同时手机也支持了<code>GPRS/EDGE</code>，那时的流量费是真的贵(年少无知不懂事，不开套餐用老妈的手机上网玩，话费玩超了赔进去好多零花钱😭) 那个年代手机门户网站才开始出现，各种企业黄页，各家运营商都做了，质量都差不多。手机变成了彩屏，有了摄像头，可以安装Java小程序(性能真的差)。</p>
+<h2 id="第一部自己的手机-nokia-5200">第一部自己的手机-Nokia 5200</h2>
+<p><em><strong>持续更新......</strong></em></p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[记录一次服务器磁盘容量不足的清理过程]]></title>
         <id>https://stardemo.github.io/post/ji-lu-yi-ci-fu-wu-qi-ci-pan-rong-liang-bu-zu-de-qing-li-guo-cheng/</id>
@@ -599,30 +618,6 @@ reload
 }
 </code></pre>
 <p>把需要的DNS规格写入Hosts节点下，即可进行集群层面的解析配置。</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[使用nc检测TCP/UDP端口开放]]></title>
-        <id>https://stardemo.github.io/post/shi-yong-nc-jian-ce-tcpudp-duan-kou-kai-fang/</id>
-        <link href="https://stardemo.github.io/post/shi-yong-nc-jian-ce-tcpudp-duan-kou-kai-fang/">
-        </link>
-        <updated>2020-08-18T13:40:09.000Z</updated>
-        <content type="html"><![CDATA[<h1 id="telnet-检测tcp端口">Telnet 检测TCP端口</h1>
-<pre><code class="language-shell">[root@localhost ~]# telnet 127.0.0.1 8080
-Trying 127.0.0.1...
-Connected to 127.0.0.1.
-Escape character is '^]'.
-^CConnection closed by foreign host.
-</code></pre>
-<h1 id="nc-检测tcp端口">NC 检测TCP端口</h1>
-<pre><code class="language-shell">[root@localhost ~]# nc -vz 127.0.0.1 8906
-Connection to 127.0.0.1 8906 port [tcp/*] succeeded!
-</code></pre>
-<h1 id="nc-检测udp端口">NC 检测UDP端口</h1>
-<p><code>检测udp端口的时候不会立即返回测试结果，可能需要等待几秒钟</code></p>
-<pre><code class="language-shell">[root@apexsoft ~]# nc -uz 127.0.0.1 8907
-Connection to 127.0.0.1 8907 port [udp/*] succeeded!
-</code></pre>
 ]]></content>
     </entry>
 </feed>
